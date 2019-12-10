@@ -13,9 +13,9 @@ if [ -x /usr/bin/dircolors ]; then
 fi
 
 if uname -a | grep -q Darwin; then
-    alias ls='gls --color=auto --time-style="+%F %H:%M:%S"'
+    alias ls='gls --color=auto --time-style="+%F|%T"'
 else
-    alias ls='ls --color=auto --time-style="+%F %H:%M:%S"'
+    alias ls='ls --color=auto --time-style="+%F|%T"'
 fi
 
 alias la='ls -A'
