@@ -36,6 +36,7 @@ call vundle#begin()
 " let Vundle manage Vundle, required
 Plugin 'VundleVim/Vundle.vim'
 
+Plugin 'scrooloose/nerdtree'
 Plugin 'ervandew/supertab'
 Plugin 'godlygeek/tabular'
 Plugin 'tpope/vim-surround'
@@ -216,9 +217,6 @@ nmap <S-tab>	v<
 map <C-j>		jz.
 map <C-k>		kz.
 
-"block copy "好像沒很好用
-map <C-w>y      Vj]}y
-
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Grep
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -287,13 +285,43 @@ set guitabtooltip=%{GuiTabToolTip()}
 set tabline=%!SetTabLine()
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" netrw
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+" tree viw
+let g:netrw_liststyle=3
+
+" hidden banner
+let g:netrw_banner=0
+
+"1 - open files in a new horizontal split
+"2 - open files in a new vertical split
+"3 - open files in a new tab
+"4 - open in previous window
+let netrw_browse_split=4
+
+" width %
+let g:netrw_winsize=25
+
+let g:netrw_altv = 1
+
+"augroup ProjectDrawer
+"    autocmd!
+"    autocmd BufRead * :Vexplore
+"augroup END
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " NERDTree Plugin
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"an 50.20 &View.File\ Viewer<Tab><F5> <ESC>:NERDTreeToggle<CR>
-"map <F5>        <ESC>:NERDTreeToggle<CR>
+"autocmd vimenter * NERDTree
 
-"map <C-t>f		:NERDTreeFind<CR>
-"map <C-t>o		t:NERDTreeMirror<CR><C-w>l
+autocmd StdinReadPre * let s:std_in=1
+" open no files
+autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
+" open a saved session
+autocmd VimEnter * if argc() == 0 && !exists("s:std_in") && v:this_session == "" | NERDTree | endif
+" open dir
+autocmd VimEnter * if argc() == 1 && isdirectory(argv()[0]) && !exists("s:std_in") | exe 'NERDTree' argv()[0] | wincmd p | ene | exe 'cd '.argv()[0] | endif
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " CLang
