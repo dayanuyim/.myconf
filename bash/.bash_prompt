@@ -213,7 +213,7 @@ esac
 if [ "$color_prompt" != "yes" ]; then
     PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
 else
-    PS1="${debian_chroot:+($debian_chroot)}\$(_prompt_smiley)$(_prompt_time)$(_prompt_user)$(_prompt_cwd)\n\$ "
+    PS1="${debian_chroot:+($debian_chroot)}\`_prompt_smiley\`$(_prompt_time)$(_prompt_user)$(_prompt_cwd)\n\$ "
 fi
 
 unset color_prompt
