@@ -12,7 +12,8 @@ function exportAdd {
     # eval "export PATH="$value:$PATH", if $name is PATH.
     case ":${!name}:" in
         *":$value:"*) :;;
-        *) eval "$(echo export $name=\"\$value:\$$name\")";;
+        "::") eval "$(echo export $name=\"\$value\")" ;;
+        *)    eval "$(echo export $name=\"\$value:\$$name\")" ;;
     esac
 }
 
