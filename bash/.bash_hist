@@ -12,3 +12,9 @@ shopt -s histappend
 HISTSIZE=1000
 HISTFILESIZE=2000
 
+
+#hist_cmd="history -a;history -n"
+#if [[ $PROMPT_COMMAND != *$hist_cmd* ]]; then
+#    export PROMPT_COMMAND="${PROMPT_COMMAND:+;$PROMPT_COMMAND}${hist_cmd}"
+#fi
+#unset hist_cmd
