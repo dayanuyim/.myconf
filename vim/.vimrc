@@ -40,6 +40,7 @@ Plugin 'scrooloose/nerdtree'
 Plugin 'ervandew/supertab'
 Plugin 'godlygeek/tabular'
 Plugin 'tpope/vim-surround'
+Plugin 'tpope/vim-repeat'
 "syntax ------------------------
 Plugin 'rust-lang/rust.vim'
 Plugin 'tomlion/vim-solidity'
@@ -52,7 +53,7 @@ Plugin 'vim-scripts/gdl.vim'
 Plugin 'vim-scripts/openvpn'
 Plugin 'cespare/vim-toml'
 Plugin 'stevearc/vim-arduino'
-Plugin 'WolfgangMehner/bash-support'
+"Plugin 'WolfgangMehner/bash-support'
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
@@ -145,20 +146,18 @@ map <F4> <ESC>:cnext<CR>
 "au BufNewFile,BufRead *.cpp 
 au Filetype c call CCompOps()
 function CCompOps()
-    let mkfile = '~/Projects/template.c.mk'
-	exec "nnoremap <F5> <ESC>mZ<ESC>:make --silent -f ".mkfile." SRCS='%:p'<CR>"
+	exec "nnoremap <F5> <ESC>mZ<ESC>:make --silent SRCS='%:p'<CR>"
 	nnoremap <F6> <ESC>:!'%:p:r'<CR>
-	exec "nnoremap <F8> <ESC>:make --silent -f " . mkfile " SRCS='%:p' clean<CR>"
+	exec "nnoremap <F8> <ESC>:make --silent SRCS='%:p' clean<CR>"
 	nnoremap <F9> `Z
 endfunction
 
 au Filetype cpp call CppCompOps()
 function CppCompOps()
-    let mkfile = '~/Projects/template.cpp.mk'
 	set errorformat+=\[%f:%l\]:\ %m "cppcheck
-    exec "nnoremap <F5> <ESC>mZ<ESC>:make --silent -f " .mkfile. " SRCS='%:p'<CR>"
+    nnoremap <F5> <ESC>mZ<ESC>:!clear && make --silent SRCS='%:p'<CR>
 	nnoremap <F6> <ESC>:!'%:p:r'<CR>
-	exec "nnoremap <F8> <ESC>:make --silent -f ".mkfile." SRCS='%:p' clean<CR>"
+	exec "nnoremap <F8> <ESC>:make --silent SRCS='%:p' clean<CR>"
 	nnoremap <F9> `Z
 endfunction
 
