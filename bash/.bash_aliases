@@ -36,6 +36,8 @@ alias ff='realpath'
 alias google-chrome='google-chrome -allow-file-access-from-files'
 alias gcc-vul='gcc -O0 -m32 -fno-stack-protector -no-pie -mpreferred-stack-boundary=2 -z execstack'
 alias vim='vim -p'
+alias jobs='jobs -l'
+alias top='top -c'
 
 alias readelf='readelf -W'
 alias objdump='objdump -w -M intel'

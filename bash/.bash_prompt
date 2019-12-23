@@ -175,7 +175,7 @@ function _prompt_time
 {
     if [[ $EUID -eq 0 ]]; then
         _GREY="\[\e[48;5;240m\e[38;5;250m\]"
-        GREY_="\[\e[48;5;160m]\e[38;5;240m\]"
+        GREY_="\[\e[48;5;160m\e[38;5;240m\]"
     else
         _GREY="\[\e[48;5;240m\e[38;5;250m\]"
         GREY_="\[\e[48;5;2m\e[38;5;240m\]"
