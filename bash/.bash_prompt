@@ -210,10 +210,28 @@ case "$TERM" in
     xterm-color|*-256color) color_prompt=yes;;
 esac
 
+function _prompt_var {
+    if [[ -z $_PROMPT_VARS ]]; then
+        return
+    fi
+
+    result=
+    for var in "${_PROMPT_VARS[@]}"
+    do
+        if [[ -n ${!var} ]]; then
+            result="${result:+$result, }${var}=${!var}"
+        fi
+    done
+
+    if [[ -n $result ]]; then
+        echo -ne "\n" && echo -n "($result)"
+    fi
+}
+
 if [ "$color_prompt" != "yes" ]; then
     PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
 else
-    PS1="${debian_chroot:+($debian_chroot)}\`_prompt_smiley\`$(_prompt_time)$(_prompt_user)$(_prompt_cwd)\n\$ "
+    PS1="${debian_chroot:+($debian_chroot)}\`_prompt_smiley\`$(_prompt_time)$(_prompt_user)$(_prompt_cwd)\`_prompt_var\`\n\$ "
 fi
 
 unset color_prompt
