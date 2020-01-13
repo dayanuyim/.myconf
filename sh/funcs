@@ -1,0 +1,31 @@
+
+exportPATH()
+{
+    path="$1"
+    case ":$PATH:" in
+        *":$path:"*) :;;
+        "::") export PATH="$path";;
+        *)    export PATH="$path:$PATH";;
+    esac
+}
+
+exportLIBRARY_PATH()
+{
+    path="$1"
+    case ":$LIBRARY_PATH:" in
+        *":$path:"*) :;;
+        "::") export LIBRARY_PATH="$path" ;;
+        *)    export LIBRARY_PATH="$path:$LIBRARY_PATH" ;;
+    esac
+}
+
+exportLD_LIBRARY_PATH()
+{
+    path="$1"
+    case ":$LD_LIBRARY_PATH:" in
+        *":$path:"*) :;;
+        "::") export LD_LIBRARY_PATH="$path" ;;
+        *)    export LD_LIBRARY_PATH="$path:$LD_LIBRARY_PATH" ;;
+    esac
+}
+

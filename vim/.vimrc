@@ -216,6 +216,9 @@ map <space> zA
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Utilities
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" swap two words
+nmap <C-s>  lbdepldebhP
+nmap <S-s>  lBdEpldEBhP
 
 " insdert tab in command mode
 nmap <tab>		v>
