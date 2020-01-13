@@ -71,6 +71,14 @@ filetype plugin indent on    " required
 " Put your non-Plugin stuff after this line
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Plugin Settings
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+" Set the flag to prevent SuperTab from inserting one more line when keying ENTER.
+" But WHY? ref: https://github.com/ervandew/supertab/issues/142
+let g:SuperTabCrMapping = 0
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Colorscheme
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 syntax on
@@ -95,6 +103,7 @@ set expandtab
 " local tab settings
 autocmd FileType make setlocal noexpandtab
 autocmd FileType html setlocal tabstop=2 shiftwidth=2 softtabstop=2
+autocmd FileType json setlocal tabstop=2 shiftwidth=2 softtabstop=2
 autocmd FileType js setlocal tabstop=2 shiftwidth=2 softtabstop=2
 autocmd FileType ts setlocal tabstop=2 shiftwidth=2 softtabstop=2
 
