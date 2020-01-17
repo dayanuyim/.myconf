@@ -420,14 +420,17 @@ map <F12> <ESC>:set fileencoding=utf8<CR>
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 if has('gui_running')
-    if has("win32")
+    if has("win32") || has("win64")
         "set guifont=Lucida_Console:h11
         "set guifont=consolas:h12
         set guifont=Monaco:h11:cANSI
         set guifontwide=DFKai-SB:h14:cCHINESEBIG5  "標楷, support UNICODE
         "set guifontwide=MingLiU:h12:cCHINESEBIG5   "細明, support UNICODE
         "set guifontwide=華康仿宋體W4:h14:cCHINESEBIG5
-    else
+    elseif has("macunix")
+        set guifont=Monaco:h16
+        set guifontwide=STKaitiTC-Regular:h18
+    elseif has("unix")
         set guifont=Monaco\ 11
         set guifontwide=AR\ PL\ UKai\ TW\ MBE\ 14   "標楷, support UNICODE
     endif
