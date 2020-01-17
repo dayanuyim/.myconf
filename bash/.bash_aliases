@@ -14,8 +14,10 @@ fi
 
 if uname -a | grep -q Darwin; then
     alias ls='gls --color=auto --time-style="+%F|%T"'
+    alias avrdude='avrdude -C /Applications/Arduino.app/Contents/Java/hardware/tools/avr/etc/avrdude.conf'
 else
     alias ls='ls --color=auto --time-style="+%F|%T"'
+    alias top='top -c'
 fi
 
 alias la='ls -A'
@@ -37,7 +39,6 @@ alias google-chrome='google-chrome -allow-file-access-from-files'
 alias gcc-vul='gcc -O0 -m32 -fno-stack-protector -no-pie -mpreferred-stack-boundary=2 -z execstack'
 alias vim='vim -p'
 alias jobs='jobs -l'
-alias top='top -c'
 
 alias readelf='readelf -W'
 alias objdump='objdump -w -M intel'
@@ -45,3 +46,4 @@ alias objdump='objdump -w -M intel'
 #git config --global alias.root "rev-parse --show-toplevel"
 alias cdroot='cd "$(git root)"'
 alias hex2bin='objcopy --input-target=ihex --output-target=binary'
+alias curl-json='curl -H "Content-Type:application/json"'

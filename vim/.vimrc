@@ -71,6 +71,14 @@ filetype plugin indent on    " required
 " Put your non-Plugin stuff after this line
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Plugin Settings
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+" Set the flag to prevent SuperTab from inserting one more line when keying ENTER.
+" But WHY? ref: https://github.com/ervandew/supertab/issues/142
+let g:SuperTabCrMapping = 0
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Colorscheme
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 syntax on
@@ -95,6 +103,7 @@ set expandtab
 " local tab settings
 autocmd FileType make setlocal noexpandtab
 autocmd FileType html setlocal tabstop=2 shiftwidth=2 softtabstop=2
+autocmd FileType json setlocal tabstop=2 shiftwidth=2 softtabstop=2
 autocmd FileType js setlocal tabstop=2 shiftwidth=2 softtabstop=2
 autocmd FileType ts setlocal tabstop=2 shiftwidth=2 softtabstop=2
 
@@ -411,14 +420,17 @@ map <F12> <ESC>:set fileencoding=utf8<CR>
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 if has('gui_running')
-    if has("win32")
+    if has("win32") || has("win64")
         "set guifont=Lucida_Console:h11
         "set guifont=consolas:h12
         set guifont=Monaco:h11:cANSI
         set guifontwide=DFKai-SB:h14:cCHINESEBIG5  "標楷, support UNICODE
         "set guifontwide=MingLiU:h12:cCHINESEBIG5   "細明, support UNICODE
         "set guifontwide=華康仿宋體W4:h14:cCHINESEBIG5
-    else
+    elseif has("macunix")
+        set guifont=Monaco:h16
+        set guifontwide=STKaitiTC-Regular:h18
+    elseif has("unix")
         set guifont=Monaco\ 11
         set guifontwide=AR\ PL\ UKai\ TW\ MBE\ 14   "標楷, support UNICODE
     endif
