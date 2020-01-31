@@ -45,5 +45,5 @@ alias objdump='objdump -w -M intel'
 
 #git config --global alias.root "rev-parse --show-toplevel"
 alias cdroot='cd "$(git root)"'
-
+alias hex2bin='objcopy --input-target=ihex --output-target=binary'
 alias curl-json='curl -H "Content-Type:application/json"'
