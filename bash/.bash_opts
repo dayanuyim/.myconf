@@ -8,6 +8,7 @@ stty -ixon
 
 set -o vi
 set -o noclobber
+set -o pipefail
 
 shopt -s extglob
 
