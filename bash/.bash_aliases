@@ -18,6 +18,7 @@ if uname -a | grep -q Darwin; then
 else
     alias ls='ls --color=auto --time-style="+%F|%T"'
     alias top='top -c'
+    alias cal='ncal -b'
 fi
 
 alias la='ls -A'
@@ -42,8 +43,9 @@ alias jobs='jobs -l'
 
 alias readelf='readelf -W'
 alias objdump='objdump -w -M intel'
+alias hex2bin='objcopy --input-target=ihex --output-target=binary'
 
 #git config --global alias.root "rev-parse --show-toplevel"
 alias cdroot='cd "$(git root)"'
-alias hex2bin='objcopy --input-target=ihex --output-target=binary'
-alias curl-json='curl -H "Content-Type:application/json"'
+
+alias curl-json='curl -s -H "Content-Type:application/json"'
