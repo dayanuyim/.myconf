@@ -218,7 +218,7 @@ map <space> zA
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " swap two words
 nmap <C-s>  lbdepldebhP
-nmap <S-s>  lBdEpldEBhP
+"nmap <S-s>  lBdEpldEBhP
 
 " insdert tab in command mode
 nmap <tab>		v>
