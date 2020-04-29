@@ -13,14 +13,17 @@ if [ -x /usr/bin/dircolors ]; then
 fi
 
 if uname -a | grep -q Darwin; then
-    alias ls='gls --color=auto --time-style="+%F|%T"'
     alias avrdude='avrdude -C /Applications/Arduino.app/Contents/Java/hardware/tools/avr/etc/avrdude.conf'
+    # using gnu utils
+    alias _ls='gls'
+    alias strings='gstrings'
 else
-    alias ls='ls --color=auto --time-style="+%F|%T"'
+    alias _ls='ls'
     alias top='top -c'
     alias cal='ncal -b'
 fi
 
+alias ls='_ls --color=auto --time-style="+%F|%T"'
 alias la='ls -A'
 alias l.='ls -d .!(|.)'
 
