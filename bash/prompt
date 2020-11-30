@@ -174,11 +174,11 @@ function _prompt_smiley
 function _prompt_time
 {
     if [[ $EUID -eq 0 ]]; then
-        _GREY="\[\e[48;5;240m\]\[\e[38;5;250m\]"
-        GREY_="\[\e[48;5;160m\]\[\e[38;5;240m\]"
+        _GREY="\[\e[48;5;240m\e[38;5;250m\]"
+        GREY_="\[\e[48;5;160m\e[38;5;240m\]"
     else
-        _GREY="\[\e[48;5;240m\]\[\e[38;5;250m\]"
-        GREY_="\[\e[48;5;2m\]\[\e[38;5;240m\]"
+        _GREY="\[\e[48;5;240m\e[38;5;250m\]"
+        GREY_="\[\e[48;5;2m\e[38;5;240m\]"
     fi
 
     echo "${_GREY} \t${GREY_}"
@@ -187,18 +187,18 @@ function _prompt_time
 function _prompt_user
 {
     if [[ $EUID -eq 0 ]]; then
-        _COLOR="\[\e[48;5;160m\]\[\e[38;5;255m\]"  #red
-        COLOR_="\[\e[48;5;0m\]\[\e[38;5;160m\]"
+        _COLOR="\[\e[48;5;160m\e[38;5;255m\]"  #red
+        COLOR_="\[\e[48;5;0m\e[38;5;160m\]"
     else 
-        _COLOR="\[\e[48;5;2m\]\[\e[38;5;255m\]"    #green
-        COLOR_="\[\e[48;5;0m\]\[\e[38;5;2m\]"
+        _COLOR="\[\e[48;5;2m\e[38;5;255m\]"    #green
+        COLOR_="\[\e[48;5;0m\e[38;5;2m\]"
     fi
     echo "${_COLOR} \u@\h${COLOR_}"
 }
 
 function _prompt_cwd
 {
-    echo "${BLUE_B} \w${NC}"
+    echo "\[${BLUE_B}\] \w\[${NC}\]"
 }
 
 # set variable identifying the chroot you work in (used in the prompt below)
@@ -210,23 +210,29 @@ case "$TERM" in
     xterm-color|*-256color) color_prompt=yes;;
 esac
 
+function _prompt_var {
+    if [[ -z $_PROMPT_VARS ]]; then
+        return
+    fi
+
+    result=
+    for var in "${_PROMPT_VARS[@]}"
+    do
+        if [[ -n ${!var} ]]; then
+            result="${result:+$result, }${var}=${!var}"
+        fi
+    done
+
+    if [[ -n $result ]]; then
+        echo -ne "\n" && echo -n "($result)"
+    fi
+}
+
 if [ "$color_prompt" != "yes" ]; then
     PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
 else
-    PS1="${debian_chroot:+($debian_chroot)}\`_prompt_smiley\`$(_prompt_time)$(_prompt_user)$(_prompt_cwd)\n\$ "
+    PS1="${debian_chroot:+($debian_chroot)}\`_prompt_smiley\`$(_prompt_time)$(_prompt_user)$(_prompt_cwd)\`_prompt_var\`\n\$ "
 fi
-
-unset color_prompt
-unset -f _prompt_time
-unset -f _prompt_user
-unset -f _prompt_cwd
-
-
-##################################################################################################
-# For xtrace debug
-##################################################################################################
-
-export PS4=$'+\e[33m $BASH_SOURCE:${BASH_LINENO[0]} ${FUNCNAME[0]:-NOFUNC}() \e[0m+  '
 
 ##################################################################################################
 # Git Pormpt
@@ -235,9 +241,22 @@ export PS4=$'+\e[33m $BASH_SOURCE:${BASH_LINENO[0]} ${FUNCNAME[0]:-NOFUNC}() \e[
 if [ -z "$GIT_PROMPT_OFF" ] && [ -f ~/.bash-git-prompt/gitprompt.sh ]; then
     GIT_PROMPT_ONLY_IN_REPO=1
     #GIT_PROMPT_START=$(echo "$PS1" | sed 's/\\$ //' | sed 's/\\n$//')
-    GIT_PROMPT_START=$(echo "$PS1" | sed 's/\\n$ //' | sed 's/\\n$//')
+    #GIT_PROMPT_START=$(echo "$PS1" | sed 's/\\n$ //' | sed 's/\\n$//')
+    GIT_PROMPT_START="${debian_chroot:+($debian_chroot)}\`_prompt_smiley\`$(_prompt_time)$(_prompt_user)$(_prompt_cwd)"
+    GIT_PROMPT_SUFFIX=']`_prompt_var`'
     source ~/.bash-git-prompt/gitprompt.sh
 fi
+
+unset color_prompt
+unset -f _prompt_time
+unset -f _prompt_user
+unset -f _prompt_cwd
+
+##################################################################################################
+# For xtrace debug
+##################################################################################################
+
+export PS4=$'+\e[33m $BASH_SOURCE:${BASH_LINENO[0]} ${FUNCNAME[0]:-NOFUNC}() \e[0m+  '
 
 ##################################################################################################
 # cd

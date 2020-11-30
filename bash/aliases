@@ -13,11 +13,17 @@ if [ -x /usr/bin/dircolors ]; then
 fi
 
 if uname -a | grep -q Darwin; then
-    alias ls='gls --color=auto --time-style="+%F|%T"'
+    alias avrdude='avrdude -C /Applications/Arduino.app/Contents/Java/hardware/tools/avr/etc/avrdude.conf'
+    # using gnu utils
+    alias _ls='gls'
+    alias strings='gstrings'
 else
-    alias ls='ls --color=auto --time-style="+%F|%T"'
+    alias _ls='ls'
+    alias top='top -c'
+    alias cal='ncal -b'
 fi
 
+alias ls='_ls --color=auto --time-style="+%F|%T"'
 alias la='ls -A'
 alias l.='ls -d .!(|.)'
 
@@ -28,6 +34,7 @@ alias ll.='ls -lFd .!(|.)'
 alias grep='grep --color=auto'
 alias fgrep='fgrep --color=auto'
 alias egrep='egrep --color=auto'
+alias diff='diff --color=always'
 
 alias screen='screen -U -h 20000'
 alias tmux='tmux -u'
@@ -36,4 +43,16 @@ alias ff='realpath'
 alias google-chrome='google-chrome -allow-file-access-from-files'
 alias gcc-vul='gcc -O0 -m32 -fno-stack-protector -no-pie -mpreferred-stack-boundary=2 -z execstack'
 alias vim='vim -p'
+alias jobs='jobs -l'
+
 alias readelf='readelf -W'
+alias objdump='objdump -w -M intel'
+alias hex2bin='objcopy --input-target=ihex --output-target=binary'
+alias gdb='gdb -q'
+alias ddd='ddd -nh'
+alias cgdb='cgdb -nh'
+
+#git config --global alias.root "rev-parse --show-toplevel"
+alias cdroot='cd "$(git root)"'
+
+alias curl-json='curl -s -H "Content-Type:application/json"'

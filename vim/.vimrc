@@ -40,6 +40,7 @@ Plugin 'scrooloose/nerdtree'
 Plugin 'ervandew/supertab'
 Plugin 'godlygeek/tabular'
 Plugin 'tpope/vim-surround'
+Plugin 'tpope/vim-repeat'
 "syntax ------------------------
 Plugin 'rust-lang/rust.vim'
 Plugin 'tomlion/vim-solidity'
@@ -52,7 +53,7 @@ Plugin 'vim-scripts/gdl.vim'
 Plugin 'vim-scripts/openvpn'
 Plugin 'cespare/vim-toml'
 Plugin 'stevearc/vim-arduino'
-Plugin 'WolfgangMehner/bash-support'
+"Plugin 'WolfgangMehner/bash-support'
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
@@ -68,6 +69,14 @@ filetype plugin indent on    " required
 "
 " see :h vundle for more details or wiki for FAQ
 " Put your non-Plugin stuff after this line
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Plugin Settings
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+" Set the flag to prevent SuperTab from inserting one more line when keying ENTER.
+" But WHY? ref: https://github.com/ervandew/supertab/issues/142
+let g:SuperTabCrMapping = 0
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Colorscheme
@@ -94,6 +103,7 @@ set expandtab
 " local tab settings
 autocmd FileType make setlocal noexpandtab
 autocmd FileType html setlocal tabstop=2 shiftwidth=2 softtabstop=2
+autocmd FileType json setlocal tabstop=2 shiftwidth=2 softtabstop=2
 autocmd FileType js setlocal tabstop=2 shiftwidth=2 softtabstop=2
 autocmd FileType ts setlocal tabstop=2 shiftwidth=2 softtabstop=2
 
@@ -145,20 +155,18 @@ map <F4> <ESC>:cnext<CR>
 "au BufNewFile,BufRead *.cpp 
 au Filetype c call CCompOps()
 function CCompOps()
-    let mkfile = '~/Projects/template.c.mk'
-	exec "nnoremap <F5> <ESC>mZ<ESC>:make --silent -f ".mkfile." SRCS='%:p'<CR>"
+	exec "nnoremap <F5> <ESC>mZ<ESC>:make --silent SRCS='%:p'<CR>"
 	nnoremap <F6> <ESC>:!'%:p:r'<CR>
-	exec "nnoremap <F8> <ESC>:make --silent -f " . mkfile " SRCS='%:p' clean<CR>"
+	exec "nnoremap <F8> <ESC>:make --silent SRCS='%:p' clean<CR>"
 	nnoremap <F9> `Z
 endfunction
 
 au Filetype cpp call CppCompOps()
 function CppCompOps()
-    let mkfile = '~/Projects/template.cpp.mk'
 	set errorformat+=\[%f:%l\]:\ %m "cppcheck
-    exec "nnoremap <F5> <ESC>mZ<ESC>:make --silent -f " .mkfile. " SRCS='%:p'<CR>"
+    nnoremap <F5> <ESC>mZ<ESC>:!clear && make --silent SRCS='%:p'<CR>
 	nnoremap <F6> <ESC>:!'%:p:r'<CR>
-	exec "nnoremap <F8> <ESC>:make --silent -f ".mkfile." SRCS='%:p' clean<CR>"
+	exec "nnoremap <F8> <ESC>:make --silent SRCS='%:p' clean<CR>"
 	nnoremap <F9> `Z
 endfunction
 
@@ -208,6 +216,9 @@ map <space> zA
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Utilities
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" swap two words
+nmap <C-s>  lbdepldebhP
+"nmap <S-s>  lBdEpldEBhP
 
 " insdert tab in command mode
 nmap <tab>		v>
@@ -315,13 +326,16 @@ let g:netrw_altv = 1
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "autocmd vimenter * NERDTree
 
-autocmd StdinReadPre * let s:std_in=1
+"autocmd StdinReadPre * let s:std_in=1
+
 " open no files
-autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
+" autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
+
 " open a saved session
-autocmd VimEnter * if argc() == 0 && !exists("s:std_in") && v:this_session == "" | NERDTree | endif
+" autocmd VimEnter * if argc() == 0 && !exists("s:std_in") && v:this_session == "" | NERDTree | endif
+
 " open dir
-autocmd VimEnter * if argc() == 1 && isdirectory(argv()[0]) && !exists("s:std_in") | exe 'NERDTree' argv()[0] | wincmd p | ene | exe 'cd '.argv()[0] | endif
+" autocmd VimEnter * if argc() == 1 && isdirectory(argv()[0]) && !exists("s:std_in") | exe 'NERDTree' argv()[0] | wincmd p | ene | exe 'cd '.argv()[0] | endif
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " CLang
@@ -409,14 +423,17 @@ map <F12> <ESC>:set fileencoding=utf8<CR>
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 if has('gui_running')
-    if has("win32")
+    if has("win32") || has("win64")
         "set guifont=Lucida_Console:h11
         "set guifont=consolas:h12
         set guifont=Monaco:h11:cANSI
         set guifontwide=DFKai-SB:h14:cCHINESEBIG5  "標楷, support UNICODE
         "set guifontwide=MingLiU:h12:cCHINESEBIG5   "細明, support UNICODE
         "set guifontwide=華康仿宋體W4:h14:cCHINESEBIG5
-    else
+    elseif has("macunix")
+        set guifont=Monaco:h16
+        set guifontwide=STKaitiTC-Regular:h18
+    elseif has("unix")
         set guifont=Monaco\ 11
         set guifontwide=AR\ PL\ UKai\ TW\ MBE\ 14   "標楷, support UNICODE
     endif
