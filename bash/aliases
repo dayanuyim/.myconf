@@ -34,6 +34,7 @@ alias ll.='ls -lFd .!(|.)'
 alias grep='grep --color=auto'
 alias fgrep='fgrep --color=auto'
 alias egrep='egrep --color=auto'
+alias diff='diff --color=always'
 
 alias screen='screen -U -h 20000'
 alias tmux='tmux -u'
@@ -49,6 +50,9 @@ alias bc='bc -q'
 alias readelf='readelf -W'
 alias objdump='objdump -w -M intel'
 alias hex2bin='objcopy --input-target=ihex --output-target=binary'
+alias gdb='gdb -q'
+alias ddd='ddd -nh'
+alias cgdb='cgdb -nh'
 
 #git config --global alias.root "rev-parse --show-toplevel"
 alias cdroot='cd "$(git root)"'
