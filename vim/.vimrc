@@ -386,6 +386,10 @@ else
 	set fileformat=unix
 endif
 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Simple Chinese -> Traditional Chinese
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+map <F11> <ESC>:%!opencc<CR>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Encoding Setting
@@ -416,7 +420,7 @@ else
     echoerr "Sorry, this version of (g)vim was not compiled with +multi_byte"
 endif
 
-map <F11> <ESC>:set fileencoding=big5<CR>
+"map <F11> <ESC>:set fileencoding=big5<CR>
 map <F12> <ESC>:set fileencoding=utf8<CR>
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
