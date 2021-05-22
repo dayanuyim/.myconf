@@ -132,7 +132,8 @@ set autowrite
 "cpp set matchpairs+=<:>  "may cause some odds...
 
 " write with sudo
-cmap w!! w !sudo tee >/dev/null %
+"cmap w!! w !sudo tee >/dev/null %
+cnoremap w!! execute 'silent! write !sudo tee % >/dev/null' <bar> edit!
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Compile
