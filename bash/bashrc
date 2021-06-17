@@ -1,0 +1,358 @@
+# ~/.bashrc: executed by bash(1) for non-login shells.
+# see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
+# for examples
+
+# If not running interactively, don't do anything
+case $- in
+    *i*) ;;
+      *) return;;
+esac
+
+############################################################################
+# Help Functions
+############################################################################
+
+function export-check {
+    name=${1%%=*}
+    value=${1#*=}
+
+    if [[ -z $name ]]; then
+        >&2 echo "usage ${FUNCNAME[0]} <name>=<value>"
+        return 1
+    fi
+
+    # eval "export PATH="$value:$PATH", if $name is PATH.
+    case ":${!name}:" in
+        *":$value:"*) :;;
+        "::") eval "$(echo export $name=\"\$value\")" ;;
+        *)    eval "$(echo export $name=\"\$value:\$$name\")" ;;
+    esac
+}
+
+function tmux-export {
+    if ! [[ "$TERM" =~ "screen".* ]]; then
+        >&2 echo "error: not in tmux session."
+        return 2
+    fi
+
+    name=${1%%=*}
+    value=${1#*=}
+
+    if [[ -z $name ]]; then
+        >&2 echo "usage ${FUNCNAME[0]} <name>=<value>"
+        return 1
+    fi
+
+    tmux setenv "$name" "$value" && export "$name"="$value"
+    return 0
+}
+
+############################################################################
+# Define Variables
+############################################################################
+
+export LANG=en_US.UTF-8
+export EDITOR=vim
+
+# enfore xterm-256color if not within TMUX
+if [[ "$TERM" != "screen-256color" ]]; then
+    export TERM=xterm-256color
+fi
+
+export _PROMPT_VARS=(IP PORT)
+
+############################################################################
+# Path
+############################################################################
+
+#export-check PATH=~/bin
+
+############################################################################
+# History
+############################################################################
+
+# don't put duplicate lines or lines starting with space in the history.
+# See bash(1) for more options
+#HISTCONTROL=ignoreboth
+HISTCONTROL=ignoredups
+HISTTIMEFORMAT='%F|%T '
+
+# append to the history file, don't overwrite it
+shopt -s histappend
+
+# for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
+HISTSIZE=1000
+HISTFILESIZE=2000
+
+############################################################################
+# Shell setting options
+############################################################################
+
+stty -ixon
+
+set -o vi
+set -o noclobber
+set -o pipefail
+
+shopt -s extglob
+
+# If set, the pattern "**" used in a pathname expansion context will
+# match all files and zero or more directories and subdirectories.
+shopt -s globstar
+
+# check the window size after each command and, if necessary,
+# update the values of LINES and COLUMNS.
+shopt -s checkwinsize
+
+# make less more friendly for non-text input files, see lesspipe(1)
+[ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
+
+# enable programmable completion features (you don't need to enable
+# this, if it's already enabled in /etc/bash.bashrc and /etc/profile
+# sources /etc/bash.bashrc).
+if ! shopt -oq posix; then
+  if [ -f /usr/share/bash-completion/bash_completion ]; then
+    . /usr/share/bash-completion/bash_completion
+  elif [ -f /etc/bash_completion ]; then
+    . /etc/bash_completion
+  fi
+fi
+
+
+############################################################################
+# Prompt
+############################################################################
+
+# Format	     Foreground  Background 
+# 0: normal      30: Black   40: Black
+# 1: bold        31: Red     41: Red
+# 4: Underlined  32: Green   42: Green
+#                33: Yellow  43: Yellow
+#                34: Blue    44: Blue
+#                35: Purple  45: Purple
+#                36: Cyan    46: Cyan
+#                37: White   47: White
+
+      NC='\e[0m'
+#  BLACK='\e[0;30m'
+#    RED='\e[0;31m'
+#  GREEN='\e[0;32m'
+# YELLOW='\e[0;33m'
+#   BLUE='\e[0;34m'
+# PURPLE='\e[0;35m'
+#   CYAN='\e[0;36m'
+#  WHITE='\e[0;37m'
+   RED_W='\e[1;41;37m'
+ GREEN_W='\e[1;42;37m'
+YELLOW_W='\e[1;43;37m'
+  BLUE_W='\e[1;44;37m'
+  BLUE_B='\e[1;40;34m'
+
+function _prompt_smiley
+{
+    ec=$?
+
+    _RED="\e[48;5;160m\e[38;5;255m"
+    RED_="\e[48;5;208m\e[38;5;160m"
+    _GREEN="\e[48;5;2m\e[38;5;255m"
+    GREEN_="\e[48;5;240m\e[38;5;2m"
+    _ORANGE="\e[48;5;208m\e[38;5;255m"
+    ORANGE_="\e[48;5;240m\e[38;5;208m"
+
+    if [ $ec -eq 0 ]; then
+        echo -e "${_GREEN}:)${GREEN_}"
+    else
+        echo -e "${_RED}:(${RED_}${_ORANGE} ${ec} ${ORANGE_}"
+    fi
+    return $ec;
+}
+
+function _prompt_time
+{
+    if [[ $EUID -eq 0 ]]; then
+        _GREY="\[\e[48;5;240m\e[38;5;250m\]"
+        GREY_="\[\e[48;5;160m\e[38;5;240m\]"
+    else
+        _GREY="\[\e[48;5;240m\e[38;5;250m\]"
+        GREY_="\[\e[48;5;2m\e[38;5;240m\]"
+    fi
+
+    echo "${_GREY} \t${GREY_}"
+}
+
+function _prompt_user
+{
+    if [[ $EUID -eq 0 ]]; then
+        _COLOR="\[\e[48;5;160m\e[38;5;255m\]"  #red
+        COLOR_="\[\e[48;5;0m\e[38;5;160m\]"
+    else 
+        _COLOR="\[\e[48;5;2m\e[38;5;255m\]"    #green
+        COLOR_="\[\e[48;5;0m\e[38;5;2m\]"
+    fi
+    echo "${_COLOR} \u@\h${COLOR_}"
+}
+
+function _prompt_cwd
+{
+    echo "\[${BLUE_B}\] \w\[${NC}\]"
+}
+
+function _prompt_var {
+    if [[ -z $_PROMPT_VARS ]]; then
+        return
+    fi
+
+    result=
+    for var in "${_PROMPT_VARS[@]}"
+    do
+        if [[ -n ${!var} ]]; then
+            result="${result:+$result, }${var}=${!var}"
+        fi
+    done
+
+    if [[ -n $result ]]; then
+        echo -ne "\n" && echo -n "($result)"
+    fi
+}
+
+# set variable identifying the chroot you work in (used in the prompt below)
+if [ -z "${debian_chroot:-}" ] && [ -r /etc/debian_chroot ]; then
+    debian_chroot=$(cat /etc/debian_chroot)
+fi
+
+case "$TERM" in
+    xterm-color|*-256color) color_prompt=yes;;
+esac
+
+if [ "$color_prompt" != "yes" ]; then
+    PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
+else
+    PS1="${debian_chroot:+($debian_chroot)}\`_prompt_smiley\`$(_prompt_time)$(_prompt_user)$(_prompt_cwd)"'`_prompt_var`\n\$ '
+fi
+
+#-------------------------------------------------------------------------------------------------
+# Git Pormpt
+#-------------------------------------------------------------------------------------------------
+
+if [ -z "$GIT_PROMPT_OFF" ] && [ -f ~/.bash-git-prompt/gitprompt.sh ]; then
+    GIT_PROMPT_ONLY_IN_REPO=1
+    #GIT_PROMPT_START=$(echo "$PS1" | sed 's/\\$ //' | sed 's/\\n$//')
+    #GIT_PROMPT_START=$(echo "$PS1" | sed 's/\\n$ //' | sed 's/\\n$//')
+    GIT_PROMPT_START="${debian_chroot:+($debian_chroot)}\`_prompt_smiley\`$(_prompt_time)$(_prompt_user)$(_prompt_cwd)"
+    GIT_PROMPT_SUFFIX=']`_prompt_var`'
+    source ~/.bash-git-prompt/gitprompt.sh
+fi
+
+unset color_prompt
+unset -f _prompt_time
+unset -f _prompt_user
+unset -f _prompt_cwd
+
+#-------------------------------------------------------------------------------------------------
+# For xtrace debug
+#-------------------------------------------------------------------------------------------------
+
+export PS4=$'+\e[33m $BASH_SOURCE:${BASH_LINENO[0]} ${FUNCNAME[0]:-NOFUNC}() \e[0m+  '
+
+#-------------------------------------------------------------------------------------------------
+# cd
+#-------------------------------------------------------------------------------------------------
+
+function _cd_mac {
+    builtin cd "$@" && COLUMNS="$(tput cols)" CLICOLOR_FORCE=1 ls -CG | awk '{if(NR > 5){print "...(more)"; exit} else print $0}'
+}
+
+function _cd_linux {
+    builtin cd "$@" && ls -C -w "$(tput cols)" --color=always         | awk '{if(NR > 5){print "...(more)"; exit} else print $0}'
+}
+
+if uname -a | grep -q Darwin; then
+    alias cd='_cd_mac'
+    unset -f _cd_linux
+else
+    alias cd='_cd_linux'
+    unset -f _cd_mac
+fi
+
+[ "$NEWLINE_BEFORE_PROMPT" = yes ] && PROMPT_COMMAND="PROMPT_COMMAND=echo"
+
+############################################################################
+# Alias
+############################################################################
+
+if uname -a | grep -q Darwin; then
+    alias avrdude='avrdude -C /Applications/Arduino.app/Contents/Java/hardware/tools/avr/etc/avrdude.conf'
+    # using gnu utils
+    lscmd="gls"
+    alias strings='gstrings'
+else
+    lscmd="ls"
+    alias top='top -c'
+    alias cal='ncal -b'
+fi
+
+# enable color support of ls, less and man, and also add handy aliases
+if [ -x /usr/bin/dircolors ]; then
+    test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
+    lscolor="--color=auto"
+    #alias ls='ls --color=auto'
+    #alias dir='dir --color=auto'
+    #alias vdir='vdir --color=auto'
+
+    alias grep='grep --color=auto'
+    alias fgrep='fgrep --color=auto'
+    alias egrep='egrep --color=auto'
+    alias diff='diff --color=auto'
+    alias ip='ip --color=auto'
+
+    export LESS_TERMCAP_mb=$'\E[1;31m'     # begin blink
+    export LESS_TERMCAP_md=$'\E[1;36m'     # begin bold
+    export LESS_TERMCAP_me=$'\E[0m'        # reset bold/blink
+    export LESS_TERMCAP_so=$'\E[01;33m'    # begin reverse video
+    export LESS_TERMCAP_se=$'\E[0m'        # reset reverse video
+    export LESS_TERMCAP_us=$'\E[1;32m'     # begin underline
+    export LESS_TERMCAP_ue=$'\E[0m'        # reset underline
+fi
+
+# colored GCC warnings and errors
+#export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
+
+alias ls="$lscmd $lscolor --time-style='+%F|%T'"
+alias la='ls -A'
+alias l.='ls -d .!(|.)'
+
+alias ll='ls -lF'
+alias lla='ls -lFA'
+alias ll.='ls -lFd .!(|.)'
+
+alias screen='screen -U -h 20000'
+alias tmux='tmux -u'
+alias cp='cp -i'
+alias mv-rsync='rsync --remove-source-files -a -vhP'
+alias ff='realpath'
+alias google-chrome='google-chrome -allow-file-access-from-files'
+alias gcc-vul='gcc -O0 -m32 -fno-stack-protector -no-pie -mpreferred-stack-boundary=2 -z execstack'
+alias vim='vim -p'
+alias jobs='jobs -l'
+alias bc='bc -q'
+
+alias readelf='readelf -W'
+alias objdump='objdump -w -M intel'
+alias hex2bin='objcopy --input-target=ihex --output-target=binary'
+alias gdb='gdb -q'
+alias ddd='ddd -nh'
+alias cgdb='cgdb -nh'
+
+#git config --global alias.root "rev-parse --show-toplevel"
+alias cdroot='cd "$(git root)"'
+
+alias curl-json='curl -s -H "Content-Type:application/json"'
+
+# Alias definitions.
+# You may want to put all your additions into a separate file like
+# ~/.bash_aliases, instead of adding them here directly.
+# See /usr/share/doc/bash-doc/examples in the bash-doc package.
+
+if [ -f ~/.bash_aliases ]; then
+    . ~/.bash_aliases
+fi
