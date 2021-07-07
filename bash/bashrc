@@ -12,7 +12,7 @@ esac
 # Help Functions
 ############################################################################
 
-function export-check {
+function export-add {
     name=${1%%=*}
     value=${1#*=}
 
