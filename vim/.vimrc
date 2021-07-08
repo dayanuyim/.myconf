@@ -101,11 +101,12 @@ set shiftwidth=4
 set softtabstop=4  "use space, instead of tab
 set expandtab
 " local tab settings
-autocmd FileType make setlocal noexpandtab
-autocmd FileType html setlocal tabstop=2 shiftwidth=2 softtabstop=2
-autocmd FileType json setlocal tabstop=2 shiftwidth=2 softtabstop=2
-autocmd FileType js setlocal tabstop=2 shiftwidth=2 softtabstop=2
-autocmd FileType ts setlocal tabstop=2 shiftwidth=2 softtabstop=2
+autocmd FileType make    setlocal noexpandtab
+autocmd FileType html    setlocal tabstop=2 shiftwidth=2 softtabstop=2
+autocmd FileType json    setlocal tabstop=2 shiftwidth=2 softtabstop=2
+autocmd FileType js      setlocal tabstop=2 shiftwidth=2 softtabstop=2
+autocmd FileType ts      setlocal tabstop=2 shiftwidth=2 softtabstop=2
+autocmd FileType crontab setlocal tabstop=8 noexpandtab
 
 "search
 set ignorecase
