@@ -259,12 +259,16 @@ export PS4=$'+\e[33m $BASH_SOURCE:${BASH_LINENO[0]} ${FUNCNAME[0]:-NOFUNC}() \e[
 # cd
 #-------------------------------------------------------------------------------------------------
 
-function _cd_mac {
-    builtin cd "$@" && COLUMNS="$(tput cols)" CLICOLOR_FORCE=1 ls -CG | awk '{if(NR > 5){print "...(more)"; exit} else print $0}'
+function _cd_linux {
+    builtin cd "$@" &&  ls -C -w "$(tput cols)" --color=always        | awk '{if(NR > 5){print "...(more)"; exit} else print $0}'
 }
 
-function _cd_linux {
-    builtin cd "$@" && ls -C -w "$(tput cols)" --color=always         | awk '{if(NR > 5){print "...(more)"; exit} else print $0}'
+function _cd_mac {
+    if which gls; then
+        builtin cd "$@" && gls -C -w "$(tput cols)" --color=always        | awk '{if(NR > 5){print "...(more)"; exit} else print $0}'
+	else
+        builtin cd "$@" && COLUMNS="$(tput cols)" CLICOLOR_FORCE=1 ls -CG | awk '{if(NR > 5){print "...(more)"; exit} else print $0}'
+    fi
 }
 
 if uname -a | grep -q Darwin; then
