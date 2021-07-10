@@ -289,11 +289,13 @@ fi
 
 if uname -a | grep -q Darwin; then
     alias avrdude='avrdude -C /Applications/Arduino.app/Contents/Java/hardware/tools/avr/etc/avrdude.conf'
-    # using gnu utils
     lscmd="gls"
+    alias diff='git diff'
     alias strings='gstrings'
 else
     lscmd="ls"
+    alias diff='diff --color=auto'
+    alias ip='ip --color=auto'
     alias top='top -c'
     alias cal='ncal -b'
 fi
@@ -301,17 +303,6 @@ fi
 # enable color support of ls, less and man, and also add handy aliases
 if [ -x /usr/bin/dircolors ]; then
     test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
-    lscolor="--color=auto"
-    #alias ls='ls --color=auto'
-    #alias dir='dir --color=auto'
-    #alias vdir='vdir --color=auto'
-
-    alias grep='grep --color=auto'
-    alias fgrep='fgrep --color=auto'
-    alias egrep='egrep --color=auto'
-    alias diff='diff --color=auto'
-    alias ip='ip --color=auto'
-
     export LESS_TERMCAP_mb=$'\E[1;31m'     # begin blink
     export LESS_TERMCAP_md=$'\E[1;36m'     # begin bold
     export LESS_TERMCAP_me=$'\E[0m'        # reset bold/blink
@@ -324,13 +315,20 @@ fi
 # colored GCC warnings and errors
 #export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
 
-alias ls="$lscmd $lscolor --time-style='+%F|%T'"
+alias ls="$lscmd --color=auto --time-style='+%F|%T'"
 alias la='ls -A'
 alias l.='ls -d .!(|.)'
 
 alias ll='ls -lF'
 alias lla='ls -lFA'
 alias ll.='ls -lFd .!(|.)'
+
+#alias dir='dir --color=auto'
+#alias vdir='vdir --color=auto'
+
+alias grep='grep --color=auto'
+alias fgrep='fgrep --color=auto'
+alias egrep='egrep --color=auto'
 
 alias screen='screen -U -h 20000'
 alias tmux='tmux -u'
