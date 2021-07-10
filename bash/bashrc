@@ -261,25 +261,24 @@ export PS4=$'+\e[33m $BASH_SOURCE:${BASH_LINENO[0]} ${FUNCNAME[0]:-NOFUNC}() \e[
 # cd
 #-------------------------------------------------------------------------------------------------
 
-function _cd_linux {
-    builtin cd "$@" &&  ls -C -w "$(tput cols)" --color=always        | awk '{if(NR > 5){print "...(more)"; exit} else print $0}'
-}
-
-function _cd_mac {
-    if which -s gls; then
+# not mac / linux
+if ! uname -a | grep -q Darwin; then
+    function _cd {
+        builtin cd "$@" &&  ls -C -w "$(tput cols)" --color=always        | awk '{if(NR > 5){print "...(more)"; exit} else print $0}'
+    }
+# mac with gnu ls
+elif which -s gls; then
+    function _cd {
         builtin cd "$@" && gls -C -w "$(tput cols)" --color=always        | awk '{if(NR > 5){print "...(more)"; exit} else print $0}'
-	else
-        builtin cd "$@" && COLUMNS="$(tput cols)" CLICOLOR_FORCE=1 ls -CG | awk '{if(NR > 5){print "...(more)"; exit} else print $0}'
-    fi
-}
-
-if uname -a | grep -q Darwin; then
-    alias cd='_cd_mac'
-    unset -f _cd_linux
+    }
+# mac with builtin ls
 else
-    alias cd='_cd_linux'
-    unset -f _cd_mac
+    function _cd {
+        builtin cd "$@" && COLUMNS="$(tput cols)" CLICOLOR_FORCE=1 ls -CG | awk '{if(NR > 5){print "...(more)"; exit} else print $0}'
+    }
 fi
+
+alias cd='_cd'
 
 [ "$NEWLINE_BEFORE_PROMPT" = yes ] && PROMPT_COMMAND="PROMPT_COMMAND=echo"
 
@@ -323,6 +322,8 @@ alias ll='ls -lF'
 alias lla='ls -lFA'
 alias ll.='ls -lFd .!(|.)'
 
+unset lscmd
+
 #alias dir='dir --color=auto'
 #alias vdir='vdir --color=auto'
 
@@ -362,3 +363,4 @@ alias curl-json='curl -s -H "Content-Type:application/json"'
 if [ -f ~/.bash_aliases ]; then
     . ~/.bash_aliases
 fi
+
