@@ -263,22 +263,22 @@ export PS4=$'+\e[33m $BASH_SOURCE:${BASH_LINENO[0]} ${FUNCNAME[0]:-NOFUNC}() \e[
 
 # not mac / linux
 if ! uname -a | grep -q Darwin; then
-    function _cd {
+    function _mycd {
         builtin cd "$@" &&  ls -C -w "$(tput cols)" --color=always        | awk '{if(NR > 5){print "...(more)"; exit} else print $0}'
     }
 # mac with gnu ls
 elif which -s gls; then
-    function _cd {
+    function _mycd {
         builtin cd "$@" && gls -C -w "$(tput cols)" --color=always        | awk '{if(NR > 5){print "...(more)"; exit} else print $0}'
     }
 # mac with builtin ls
 else
-    function _cd {
+    function _mycd {
         builtin cd "$@" && COLUMNS="$(tput cols)" CLICOLOR_FORCE=1 ls -CG | awk '{if(NR > 5){print "...(more)"; exit} else print $0}'
     }
 fi
 
-alias cd='_cd'
+alias cd='_mycd'
 
 [ "$NEWLINE_BEFORE_PROMPT" = yes ] && PROMPT_COMMAND="PROMPT_COMMAND=echo"
 
