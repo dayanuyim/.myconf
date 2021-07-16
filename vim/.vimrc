@@ -366,6 +366,7 @@ augroup filetypedetect
 	au BufNewFile,BufRead *.nsh setf nsis
 	au BufNewFile,BufRead *.inf setf ppwiz
 	au BufNewFile,BufRead *.lrc setf lrc
+	au BufNewFile,BufRead *.lds setf ld
 	au BufNewFile,BufRead *.cue setf cue
 	au BufNewFile,BufRead *.ssa setf ssa
 	au BufNewFile,BufRead *.ass setf ssa
