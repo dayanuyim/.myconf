@@ -151,7 +151,7 @@ YELLOW_W='\e[1;43;37m'
   BLUE_W='\e[1;44;37m'
   BLUE_B='\e[1;40;34m'
 
-function _prompt_smiley
+function _prompt_status
 {
     ec=$?
 
@@ -162,10 +162,16 @@ function _prompt_smiley
     _ORANGE="\e[48;5;208m\e[38;5;255m"
     ORANGE_="\e[48;5;240m\e[38;5;208m"
 
-    if [ $ec -eq 0 ]; then
-        echo -e "${_GREEN}:)${GREEN_}"
+    if [ -n "$_PROMPT_SMILEY" ]; then
+        if [ $ec -eq 0 ]; then
+            echo -e "${_GREEN}:)${GREEN_}"
+        else
+            echo -e "${_RED}:(${RED_}${_ORANGE} ${ec} ${ORANGE_}"
+        fi
     else
-        echo -e "${_RED}:(${RED_}${_ORANGE} ${ec} ${ORANGE_}"
+        if [ $ec -ne 0 ]; then
+            echo -e  "${_ORANGE} ${ec} ${ORANGE_}"
+        fi
     fi
     return $ec;
 }
@@ -230,7 +236,7 @@ esac
 if [ "$color_prompt" != "yes" ]; then
     PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
 else
-    PS1="${debian_chroot:+($debian_chroot)}\`_prompt_smiley\`$(_prompt_time)$(_prompt_user)$(_prompt_cwd)"'`_prompt_var`\n\$ '
+    PS1="${debian_chroot:+($debian_chroot)}\`_prompt_status\`$(_prompt_time)$(_prompt_user)$(_prompt_cwd)"'`_prompt_var`\n\$ '
 fi
 
 #-------------------------------------------------------------------------------------------------
@@ -241,7 +247,7 @@ if [ -z "$GIT_PROMPT_OFF" ] && [ -f ~/.bash-git-prompt/gitprompt.sh ]; then
     GIT_PROMPT_ONLY_IN_REPO=1
     #GIT_PROMPT_START=$(echo "$PS1" | sed 's/\\$ //' | sed 's/\\n$//')
     #GIT_PROMPT_START=$(echo "$PS1" | sed 's/\\n$ //' | sed 's/\\n$//')
-    GIT_PROMPT_START="${debian_chroot:+($debian_chroot)}\`_prompt_smiley\`$(_prompt_time)$(_prompt_user)$(_prompt_cwd)"
+    GIT_PROMPT_START="${debian_chroot:+($debian_chroot)}\`_prompt_status\`$(_prompt_time)$(_prompt_user)$(_prompt_cwd)"
     GIT_PROMPT_SUFFIX=']`_prompt_var`'
     source ~/.bash-git-prompt/gitprompt.sh
 fi
