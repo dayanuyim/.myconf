@@ -360,6 +360,7 @@ alias cgdb='cgdb -nh'
 alias cdroot='cd "$(git root)"'
 
 alias curl-json='curl -s -H "Content-Type:application/json"'
+alias curl-github='curl -s -H "Accept: application/vnd.github.v3+json"'
 
 # Alias definitions.
 # You may want to put all your additions into a separate file like
