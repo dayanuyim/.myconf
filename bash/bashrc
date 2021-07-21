@@ -66,7 +66,7 @@ export _PROMPT_VARS=(IP PORT)
 # Path
 ############################################################################
 
-#export-add PATH=~/bin
+# use export-add, or defined in .profile
 
 ############################################################################
 # History
@@ -251,15 +251,18 @@ unset -f _prompt_time
 unset -f _prompt_user
 unset -f _prompt_cwd
 
+# @@what is this???
+[ "$NEWLINE_BEFORE_PROMPT" = yes ] && PROMPT_COMMAND="PROMPT_COMMAND=echo"
+
 #-------------------------------------------------------------------------------------------------
 # For xtrace debug
 #-------------------------------------------------------------------------------------------------
 
 export PS4=$'+\e[33m $BASH_SOURCE:${BASH_LINENO[0]} ${FUNCNAME[0]:-NOFUNC}() \e[0m+  '
 
-#-------------------------------------------------------------------------------------------------
+############################################################################
 # cd
-#-------------------------------------------------------------------------------------------------
+############################################################################
 
 # not mac / linux
 if ! uname -a | grep -q Darwin; then
@@ -280,7 +283,35 @@ fi
 
 alias cd='_mycd'
 
-[ "$NEWLINE_BEFORE_PROMPT" = yes ] && PROMPT_COMMAND="PROMPT_COMMAND=echo"
+#-------------------------------------------------------------------------------------------------
+# cd to the root of git repo
+#-------------------------------------------------------------------------------------------------
+
+function _git_repo_root {
+    git -C "$1" rev-parse --show-toplevel 2>/dev/null
+}
+
+function cd-git-root {
+    local root
+    if ! root="$(_git_repo_root)"; then
+        >&2 echo 'Not a Git repo!'
+        return 1
+    fi
+
+    if [[ $root != $PWD ]]; then
+        _mycd $root
+        return 0
+    fi
+
+    # If curretly in the root of nested submodule, then up to the nearest parent repo.
+    if root="$(_git_repo_root ..)"; then
+        _mycd $root
+        return 0
+    fi
+
+    >&2 echo "Already at Git repo root."
+    return 2
+}
 
 ############################################################################
 # Alias
@@ -349,9 +380,6 @@ alias hex2bin='objcopy --input-target=ihex --output-target=binary'
 alias gdb='gdb -q'
 alias ddd='ddd -nh'
 alias cgdb='cgdb -nh'
-
-#git config --global alias.root "rev-parse --show-toplevel"
-alias cdroot='cd "$(git root)"'
 
 alias curl-json='curl -s -H "Content-Type:application/json"'
 
