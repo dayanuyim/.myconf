@@ -389,6 +389,7 @@ alias cgdb='cgdb -nh'
 
 alias curl-json='curl -s -H "Content-Type:application/json"'
 alias curl-github='curl -s -H "Accept: application/vnd.github.v3+json"'
+alias 7z-quick='7z a -t7z -m0=lzma -mx=9 -mfb=64 -md=32m -ms=on'
 
 # Alias definitions.
 # You may want to put all your additions into a separate file like
