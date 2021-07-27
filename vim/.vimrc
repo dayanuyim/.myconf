@@ -101,11 +101,12 @@ set shiftwidth=4
 set softtabstop=4  "use space, instead of tab
 set expandtab
 " local tab settings
-autocmd FileType make setlocal noexpandtab
-autocmd FileType html setlocal tabstop=2 shiftwidth=2 softtabstop=2
-autocmd FileType json setlocal tabstop=2 shiftwidth=2 softtabstop=2
-autocmd FileType js setlocal tabstop=2 shiftwidth=2 softtabstop=2
-autocmd FileType ts setlocal tabstop=2 shiftwidth=2 softtabstop=2
+autocmd FileType make    setlocal noexpandtab
+autocmd FileType html    setlocal tabstop=2 shiftwidth=2 softtabstop=2
+autocmd FileType json    setlocal tabstop=2 shiftwidth=2 softtabstop=2
+autocmd FileType js      setlocal tabstop=2 shiftwidth=2 softtabstop=2
+autocmd FileType ts      setlocal tabstop=2 shiftwidth=2 softtabstop=2
+autocmd FileType crontab setlocal tabstop=8 noexpandtab
 
 "search
 set ignorecase
@@ -132,7 +133,8 @@ set autowrite
 "cpp set matchpairs+=<:>  "may cause some odds...
 
 " write with sudo
-cmap w!! w !sudo tee >/dev/null %
+"cmap w!! w !sudo tee >/dev/null %
+cnoremap w!! execute 'silent! write !sudo tee % >/dev/null' <bar> edit!
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Compile
@@ -364,6 +366,7 @@ augroup filetypedetect
 	au BufNewFile,BufRead *.nsh setf nsis
 	au BufNewFile,BufRead *.inf setf ppwiz
 	au BufNewFile,BufRead *.lrc setf lrc
+	au BufNewFile,BufRead *.lds setf ld
 	au BufNewFile,BufRead *.cue setf cue
 	au BufNewFile,BufRead *.ssa setf ssa
 	au BufNewFile,BufRead *.ass setf ssa
@@ -385,6 +388,10 @@ else
 	set fileformat=unix
 endif
 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Simple Chinese -> Traditional Chinese
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+map <F11> <ESC>:%!opencc<CR>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Encoding Setting
@@ -415,7 +422,7 @@ else
     echoerr "Sorry, this version of (g)vim was not compiled with +multi_byte"
 endif
 
-map <F11> <ESC>:set fileencoding=big5<CR>
+"map <F11> <ESC>:set fileencoding=big5<CR>
 map <F12> <ESC>:set fileencoding=utf8<CR>
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
