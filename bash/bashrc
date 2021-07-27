@@ -349,7 +349,7 @@ if [ -x /usr/bin/dircolors ]; then
 fi
 
 # colored GCC warnings and errors
-#export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
+export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
 
 alias ls="$lscmd --color=auto --time-style='+%F|%T'"
 alias la='ls -A'
@@ -399,4 +399,11 @@ alias 7z-quick='7z a -t7z -m0=lzma -mx=9 -mfb=64 -md=32m -ms=on'
 if [ -f ~/.bash_aliases ]; then
     . ~/.bash_aliases
 fi
+
+############################################################################
+# Others
+############################################################################
+
+[[ -d $HOME/perl5/lib/perl5 ]] && \
+    eval $(perl -I$HOME/perl5/lib/perl5 -Mlocal::lib)
 
