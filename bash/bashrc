@@ -61,6 +61,8 @@ case "$TERM" in
 esac
 
 export _PROMPT_VARS=(IP PORT)
+export _PROMPT_SMILEY=
+export _PROMPT_POWERLINE=1
 
 ############################################################################
 # Path
@@ -156,23 +158,31 @@ function _prompt_status
     ec=$?
 
     _RED="\e[48;5;160m\e[38;5;255m"
-    RED_="\e[48;5;208m\e[38;5;160m"
     _GREEN="\e[48;5;2m\e[38;5;255m"
-    GREEN_="\e[48;5;240m\e[38;5;2m"
     _ORANGE="\e[48;5;208m\e[38;5;255m"
-    ORANGE_="\e[48;5;240m\e[38;5;208m"
+
+    if [ -n "$_PROMPT_POWERLINE" ]; then
+        RED_="\e[48;5;208m\e[38;5;160m"
+        GREEN_="\e[48;5;240m\e[38;5;2m"
+        ORANGE_="\e[48;5;240m\e[38;5;208m"
+    else
+        RED_=" "
+        GREEN_=" "
+        ORANGE_=" "
+    fi
 
     if [ -n "$_PROMPT_SMILEY" ]; then
         if [ $ec -eq 0 ]; then
-            echo -e "${_GREEN}:)${GREEN_}"
+            echo -en "${_GREEN}:)${GREEN_}"
         else
-            echo -e "${_RED}:(${RED_}${_ORANGE} ${ec} ${ORANGE_}"
-        fi
-    else
-        if [ $ec -ne 0 ]; then
-            echo -e  "${_ORANGE} ${ec} ${ORANGE_}"
+            echo -en "${_RED}:(${RED_}"
         fi
     fi
+
+    if [ $ec -ne 0 ]; then
+        echo -e  "${_ORANGE} ${ec}${ORANGE_}"
+    fi
+
     return $ec;
 }
 
@@ -184,6 +194,10 @@ function _prompt_time
     else
         _GREY="\[\e[48;5;240m\e[38;5;250m\]"
         GREY_="\[\e[48;5;2m\e[38;5;240m\]"
+    fi
+
+    if [ -z "$_PROMPT_POWERLINE" ]; then
+        GREY_=" "
     fi
 
     echo "${_GREY} \t${GREY_}"
@@ -198,6 +212,11 @@ function _prompt_user
         _COLOR="\[\e[48;5;2m\e[38;5;255m\]"    #green
         COLOR_="\[\e[48;5;0m\e[38;5;2m\]"
     fi
+
+    if [[ -z "$_PROMPT_POWERLINE" ]]; then
+        COLOR_=" "
+    fi
+
     echo "${_COLOR} \u@\h${COLOR_}"
 }
 
@@ -331,7 +350,7 @@ if uname -a | grep -q Darwin; then
 else
     lscmd="ls"
     alias diff='diff --color=auto'
-    alias ip='ip --color=auto'
+    alias ip='ip -color'     # -color=auto, old version has no 'auto'
     alias top='top -c'
     alias cal='ncal -b'
 fi
@@ -349,7 +368,7 @@ if [ -x /usr/bin/dircolors ]; then
 fi
 
 # colored GCC warnings and errors
-#export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
+export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
 
 alias ls="$lscmd --color=auto --time-style='+%F|%T'"
 alias la='ls -A'
@@ -400,4 +419,11 @@ alias lsblk='lsblk -o "LABEL,NAME,MAJ:MIN,RM,SIZE,RO,TYPE,FSTYPE,MOUNTPOINT"'
 if [ -f ~/.bash_aliases ]; then
     . ~/.bash_aliases
 fi
+
+############################################################################
+# Others
+############################################################################
+
+[[ -d $HOME/perl5/lib/perl5 ]] && \
+    eval $(perl -I$HOME/perl5/lib/perl5 -Mlocal::lib)
 

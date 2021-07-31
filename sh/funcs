@@ -1,7 +1,14 @@
 
 exportPATH()
 {
-    path="$1"
+    # set path to the last arg
+    for path in "$@"; do :; done
+
+    # check if exist
+    if [ "$1" == "-d" ] && [ ! -d "$path" ]; then
+        return 1
+    fi
+
     case ":$PATH:" in
         *":$path:"*) :;;
         "::") export PATH="$path";;
@@ -11,7 +18,14 @@ exportPATH()
 
 exportLIBRARY_PATH()
 {
-    path="$1"
+    # set path to the last arg
+    for path in "$@"; do :; done
+
+    # check if exist
+    if [ "$1" == "-d" ] && [ ! -d "$path" ]; then
+        return 1
+    fi
+
     case ":$LIBRARY_PATH:" in
         *":$path:"*) :;;
         "::") export LIBRARY_PATH="$path" ;;
@@ -21,7 +35,14 @@ exportLIBRARY_PATH()
 
 exportLD_LIBRARY_PATH()
 {
-    path="$1"
+    # set path to the last arg
+    for path in "$@"; do :; done
+
+    # check if exist
+    if [ "$1" == "-d" ] && [ ! -d "$path" ]; then
+        return 1
+    fi
+
     case ":$LD_LIBRARY_PATH:" in
         *":$path:"*) :;;
         "::") export LD_LIBRARY_PATH="$path" ;;

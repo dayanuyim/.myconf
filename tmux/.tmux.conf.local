@@ -214,8 +214,6 @@ tmux_conf_theme_right_separator_sub='\uE0B3'  #   PowerlineSymbols.otf font, see
 #     - #{hostname_full}
 #     - #{hostname_full_ssh}
 #     - #{loadavg}
-#     - #{free_mem}
-#     - #{disk_usage}
 #     - #{sysinfo}
 #     - #{ip}
 #     - #{mouse}
@@ -231,8 +229,8 @@ tmux_conf_theme_right_separator_sub='\uE0B3'  #   PowerlineSymbols.otf font, see
 #     - #{username}
 #     - #{username_ssh}
 tmux_conf_theme_status_left=" ❐ #S | ↑#{?uptime_y, #{uptime_y}y,}#{?uptime_d, #{uptime_d}d,}#{?uptime_h, #{uptime_h}h,}#{?uptime_m, #{uptime_m}m,} "
-#tmux_conf_theme_status_right=" #{prefix}#{mouse}#{pairing}#{synchronized} #{?battery_status,#{battery_status},}#{?battery_bar, #{battery_bar},}#{?battery_percentage, #{battery_percentage},} , %R , %d %b | #{username}#{root} | #{hostname}"
-tmux_conf_theme_status_right=" #{prefix}#{mouse}#{pairing}#{synchronized} | #{sysinfo} | #{?battery_status,#{battery_status},}#{?battery_percentage,#{battery_percentage},} | #{username}#{root} | #{hostname} | #{ip}"
+#tmux_conf_theme_status_right=" #{prefix}#{mouse}#{pairing}#{synchronized}#{?battery_status,#{battery_status},}#{?battery_bar, #{battery_bar},}#{?battery_percentage, #{battery_percentage},} , %R , %d %b | #{username}#{root} | #{hostname} "
+ tmux_conf_theme_status_right=" #{prefix}#{mouse}#{pairing}#{synchronized} | #{sysinfo} | #{?battery_status,#{battery_status},}#{?battery_percentage,#{battery_percentage},} | #{username}#{root} | #{hostname} | #{ip}"
 
 # status left style
 tmux_conf_theme_status_left_fg="$tmux_conf_theme_colour_6,$tmux_conf_theme_colour_7,$tmux_conf_theme_colour_8"
@@ -242,7 +240,7 @@ tmux_conf_theme_status_left_attr="bold,none,none"
 # status right style
 #tmux_conf_theme_status_right_fg="$tmux_conf_theme_colour_12,$tmux_conf_theme_colour_13,$tmux_conf_theme_colour_14"
 #tmux_conf_theme_status_right_bg="$tmux_conf_theme_colour_15,$tmux_conf_theme_colour_16,$tmux_conf_theme_colour_17"
-#tmux_conf_theme_status_right_attr="none,none,bold
+#tmux_conf_theme_status_right_attr="none,none,bold"
 tmux_conf_theme_status_right_fg="$tmux_conf_theme_colour_12,#ffffff,#e0e0e0,$tmux_conf_theme_colour_13,$tmux_conf_theme_colour_14,#ffffff"
 tmux_conf_theme_status_right_bg="$tmux_conf_theme_colour_15,#408040,#468cdb,$tmux_conf_theme_colour_16,$tmux_conf_theme_colour_17,#808080"
 tmux_conf_theme_status_right_attr="none,none,none,none,bold,none"
@@ -278,7 +276,7 @@ tmux_conf_theme_synchronized_bg="none"
 tmux_conf_theme_synchronized_attr="none"
 
 # ip indicator
-tmux_conf_ip_iface="br0"
+#tmux_conf_ip_iface="br0"
 
 # battery bar symbols
 tmux_conf_battery_bar_symbol_full="◼"
