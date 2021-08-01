@@ -60,7 +60,7 @@ case "$TERM" in
     *) export TERM=xterm-256color
 esac
 
-export _PROMPT_VARS=(IP PORT)
+export _PROMPT_VARS=(IP PORT ARCH CROSS_COMPILE)
 export _PROMPT_SMILEY=
 export _PROMPT_POWERLINE=1
 
