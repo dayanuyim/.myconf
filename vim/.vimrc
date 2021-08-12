@@ -54,6 +54,7 @@ Plugin 'vim-scripts/openvpn'
 Plugin 'cespare/vim-toml'
 Plugin 'stevearc/vim-arduino'
 "Plugin 'WolfgangMehner/bash-support'
+Plugin 'kergoth/vim-bitbake'
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
