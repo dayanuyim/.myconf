@@ -60,7 +60,7 @@ case "$TERM" in
     *) export TERM=xterm-256color
 esac
 
-export _PROMPT_VARS=(IP PORT ARCH CROSS_COMPILE)
+export _PROMPT_VARS=(IP PORT ARCH CROSS_COMPILE INSTALL_MOD_PATH)
 export _PROMPT_SMILEY=
 export _PROMPT_POWERLINE=1
 
@@ -368,7 +368,9 @@ if [ -x /usr/bin/dircolors ]; then
 fi
 
 # colored GCC warnings and errors
-export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
+#export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
+export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:range1=32:range2=34:locus=01:quote=01:path=01;36:fixit-insert=32:fixit-delete=31:diff-filename=01:diff-hunk=32:diff-delete=31:diff-insert=32:type-diff=01;32'
+
 
 alias ls="$lscmd --color=auto --time-style='+%F|%T'"
 alias la='ls -A'
