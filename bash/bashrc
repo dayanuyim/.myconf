@@ -60,12 +60,19 @@ case "$TERM" in
     *) export TERM=xterm-256color
 esac
 
-# init prompt variables, empty: uninitialized, 0: disable, 1:enable
+#---------------------------------------------------------------------------
+# Prompt Variables
+#     init prompt variables, empty: uninitialized, 0: disable, 1:enable
+#---------------------------------------------------------------------------
 if [ -z "$_PROMPT_VARS" ]; then
     export _PROMPT_VARS=(IP PORT ARCH CROSS_COMPILE INSTALL_MOD_PATH)
 fi
+
 export _PROMPT_SMILEY=${_PROMPT_SMILEY:-0}
-export _PROMPT_POWERLINE=${_PROMPT_POWERLINE:-1}
+
+if [ "$LISTEN_FDNAMES" == "cloud9.socket" ]; then initval=0; else initval=1; fi
+export _PROMPT_POWERLINE=${_PROMPT_POWERLINE:-$initval}
+unset initval
 
 ############################################################################
 # Path
