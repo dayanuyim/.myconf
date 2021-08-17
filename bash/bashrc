@@ -60,9 +60,12 @@ case "$TERM" in
     *) export TERM=xterm-256color
 esac
 
-export _PROMPT_VARS=(IP PORT ARCH CROSS_COMPILE)
-export _PROMPT_SMILEY=
-export _PROMPT_POWERLINE=1
+# init prompt variables, empty: uninitialized, 0: disable, 1:enable
+if [ -z "$_PROMPT_VARS" ]; then
+    export _PROMPT_VARS=(IP PORT ARCH CROSS_COMPILE)
+fi
+export _PROMPT_SMILEY=${_PROMPT_SMILEY:-0}
+export _PROMPT_POWERLINE=${_PROMPT_POWERLINE:-1}
 
 ############################################################################
 # Path
@@ -161,7 +164,7 @@ function _prompt_status
     _GREEN="\e[48;5;2m\e[38;5;255m"
     _ORANGE="\e[48;5;208m\e[38;5;255m"
 
-    if [ -n "$_PROMPT_POWERLINE" ]; then
+    if [ "$_PROMPT_POWERLINE" == 1 ]; then
         RED_="\e[48;5;208m\e[38;5;160m"
         GREEN_="\e[48;5;240m\e[38;5;2m"
         ORANGE_="\e[48;5;240m\e[38;5;208m"
@@ -171,7 +174,7 @@ function _prompt_status
         ORANGE_=" "
     fi
 
-    if [ -n "$_PROMPT_SMILEY" ]; then
+    if [ "$_PROMPT_SMILEY" == 1 ]; then
         if [ $ec -eq 0 ]; then
             echo -en "${_GREEN}:)${GREEN_}"
         else
@@ -196,7 +199,7 @@ function _prompt_time
         GREY_="\[\e[48;5;2m\e[38;5;240m\]"
     fi
 
-    if [ -z "$_PROMPT_POWERLINE" ]; then
+    if [ "$_PROMPT_POWERLINE" != 1 ]; then
         GREY_=" "
     fi
 
@@ -213,7 +216,7 @@ function _prompt_user
         COLOR_="\[\e[48;5;0m\e[38;5;2m\]"
     fi
 
-    if [[ -z "$_PROMPT_POWERLINE" ]]; then
+    if [[ "$_PROMPT_POWERLINE" != 1 ]]; then
         COLOR_=" "
     fi
 
@@ -226,7 +229,7 @@ function _prompt_cwd
 }
 
 function _prompt_var {
-    if [[ -z $_PROMPT_VARS ]]; then
+    if [[ -z $_PROMPT_VARS || $_PROMPT_VARS == 0 ]]; then
         return
     fi
 
