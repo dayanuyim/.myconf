@@ -55,6 +55,7 @@ Plugin 'cespare/vim-toml'
 Plugin 'stevearc/vim-arduino'
 "Plugin 'WolfgangMehner/bash-support'
 Plugin 'kergoth/vim-bitbake'
+Plugin 'vim-scripts/ssa.vim'
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
