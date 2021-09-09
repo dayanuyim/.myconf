@@ -319,6 +319,10 @@ fi
 alias cd='_mycd'
 
 alias cd..='cd ..'
+alias cd...='cd ../..'
+alias cd....='cd ../../..'
+alias cd.....='cd ../../../..'
+alias cd......='cd ../../../../..'
 alias cd..2='cd ../..'
 alias cd..3='cd ../../..'
 alias cd..4='cd ../../../..'
