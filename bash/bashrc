@@ -64,15 +64,18 @@ esac
 # Prompt Variables
 #     init prompt variables, empty: uninitialized, 0: disable, 1:enable
 #---------------------------------------------------------------------------
+export _PROMPT_SMILEY=${_PROMPT_SMILEY:-0}
+
 if [ -z "$_PROMPT_VARS" ]; then
     export _PROMPT_VARS=(IP PORT ARCH CROSS_COMPILE INSTALL_MOD_PATH)
 fi
 
-export _PROMPT_SMILEY=${_PROMPT_SMILEY:-0}
-
-if [ "$LISTEN_FDNAMES" == "cloud9.socket" ]; then initval=0; else initval=1; fi
-export _PROMPT_POWERLINE=${_PROMPT_POWERLINE:-$initval}
-unset initval
+# within IDE
+if [[ $LISTEN_FDNAMES == "cloud9.socket" || $TERM_PROGRAM == "vscode" ]]; then
+    export _PROMPT_POWERLINE=0
+else
+    export _PROMPT_POWERLINE=${_PROMPT_POWERLINE:-1}
+fi
 
 ############################################################################
 # Path
