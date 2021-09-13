@@ -302,21 +302,46 @@ export PS4=$'+\e[33m $BASH_SOURCE:${BASH_LINENO[0]} ${FUNCNAME[0]:-NOFUNC}() \e[
 # cd
 ############################################################################
 
+function _mycd_ext {
+    if [[ ${#1} -le 2 || ${1:0:2} != .. ]]; then  # quick filter
+        return 1
+    fi
+
+    case $1 in
+        #(..+([.])) n=$((${#1}-1));;   # pattern enabled by 'shopt -s extglob'
+        ...) n=2;;
+        ....) n=3;;
+        .....) n=4;;
+        ......) n=5;;
+        ..[0-9]) n=${1:2};;
+        *) return 2;;
+    esac
+
+    for _ in $(seq "$n"); do echo -n "../"; done
+    return 0
+}
+
+function _mycd {
+    if args="$(_mycd_ext "$@")"; then
+        set -- "${args[@]}"
+    fi
+
+    case $_MYCD_STYLE in
+        L) builtin cd "$@" &&  ls -C -w "$(tput cols)" --color=always        | awk '{if(NR > 5){print "...(more)"; exit} else print $0}' ;;
+        m) builtin cd "$@" && gls -C -w "$(tput cols)" --color=always        | awk '{if(NR > 5){print "...(more)"; exit} else print $0}' ;;
+        M) builtin cd "$@" && COLUMNS="$(tput cols)" CLICOLOR_FORCE=1 ls -CG | awk '{if(NR > 5){print "...(more)"; exit} else print $0}' ;;
+    esac
+}
+
 # not mac / linux
 if ! uname -a | grep -q Darwin; then
-    function _mycd {
-        builtin cd "$@" &&  ls -C -w "$(tput cols)" --color=always        | awk '{if(NR > 5){print "...(more)"; exit} else print $0}'
-    }
+    _MYCD_STYLE=L
 # mac with gnu ls
 elif which -s gls; then
-    function _mycd {
-        builtin cd "$@" && gls -C -w "$(tput cols)" --color=always        | awk '{if(NR > 5){print "...(more)"; exit} else print $0}'
-    }
+    _MYCD_STYLE=m
 # mac with builtin ls
 else
-    function _mycd {
-        builtin cd "$@" && COLUMNS="$(tput cols)" CLICOLOR_FORCE=1 ls -CG | awk '{if(NR > 5){print "...(more)"; exit} else print $0}'
-    }
+    _MYCD_STYLE=M
 fi
 
 alias cd='_mycd'
@@ -346,14 +371,14 @@ function cd-git-root {
         return 1
     fi
 
-    if [[ $root != $PWD ]]; then
-        _mycd $root
+    if [[ $root != "$PWD" ]]; then
+        _mycd "$root"
         return 0
     fi
 
     # If curretly in the root of nested submodule, then up to the nearest parent repo.
     if root="$(_git_repo_root ..)"; then
-        _mycd $root
+        _mycd "$root"
         return 0
     fi
 
@@ -380,7 +405,11 @@ fi
 
 # enable color support of ls, less and man, and also add handy aliases
 if [ -x /usr/bin/dircolors ]; then
-    test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
+    if [[ -r ~/.dircolors ]]; then
+        eval "$(dircolors -b ~/.dircolors)"
+    else
+        eval "$(dircolors -b)"
+    fi
     export LESS_TERMCAP_mb=$'\E[1;31m'     # begin blink
     export LESS_TERMCAP_md=$'\E[1;36m'     # begin bold
     export LESS_TERMCAP_me=$'\E[0m'        # reset bold/blink
@@ -452,5 +481,5 @@ fi
 ############################################################################
 
 if [[ -d $HOME/perl5/lib/perl5 ]]; then
-    eval $(perl -I$HOME/perl5/lib/perl5 -Mlocal::lib)
+    eval "$(perl -I"$HOME/perl5/lib/perl5" -Mlocal::lib)"
 fi
