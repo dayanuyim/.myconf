@@ -52,7 +52,9 @@ function tmux-export {
 ############################################################################
 
 export LANG=en_US.UTF-8
+export LC_ALL=$LANG
 export EDITOR=vim
+export VISUAL=vim
 
 # enfore xterm-256color if not within TMUX
 case "$TERM" in
@@ -67,7 +69,7 @@ esac
 export _PROMPT_SMILEY=${_PROMPT_SMILEY:-0}
 
 if [ -z "$_PROMPT_VARS" ]; then
-    export _PROMPT_VARS=(IP PORT ARCH CROSS_COMPILE INSTALL_MOD_PATH)
+    export _PROMPT_VARS=(IP PORT ARCH CROSS_COMPILE INSTALL_MOD_PATH HOST KEY ID)
 fi
 
 # within IDE
@@ -435,6 +437,7 @@ alias curl-json='curl -s -H "Content-Type:application/json" -H "Accept:applicati
 alias curl-ijson='curl -s -H "Content-Type:application/json"'
 alias curl-ojson='curl -s -H "Accept:application/json"'
 alias curl-github='curl -s -H "Accept: application/vnd.github.v3+json"'
+alias curl-ufo='curl -s -H "Accept: application/ufo"'
 alias 7z-quick='7z a -t7z -m0=lzma -mx=9 -mfb=64 -md=32m -ms=on'
 alias lsblk='lsblk -o "LABEL,NAME,MAJ:MIN,RM,SIZE,RO,TYPE,FSTYPE,MOUNTPOINT"'
 
@@ -454,3 +457,4 @@ fi
 if [[ -d $HOME/perl5/lib/perl5 ]]; then
     eval $(perl -I$HOME/perl5/lib/perl5 -Mlocal::lib)
 fi
+
