@@ -391,11 +391,6 @@ else
 endif
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Simple Chinese -> Traditional Chinese
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-map <F11> <ESC>:%!opencc<CR>
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Encoding Setting
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
@@ -424,7 +419,19 @@ else
     echoerr "Sorry, this version of (g)vim was not compiled with +multi_byte"
 endif
 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Utils
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Remove ANSI Color Escape Sequences
+map <F10> <ESC>:%s/\e\[[0-9;]*m//g<CR>:%s/\r/\r/g<CR>
+
+" Simple Chinese -> Traditional Chinese
+map <F11> <ESC>:%!opencc<CR>
+
+" To Big5
 "map <F11> <ESC>:set fileencoding=big5<CR>
+
+" To UTF-8
 map <F12> <ESC>:set fileencoding=utf8<CR>
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
