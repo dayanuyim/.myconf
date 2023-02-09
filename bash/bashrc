@@ -305,21 +305,24 @@ export PS4=$'+\e[33m $BASH_SOURCE:${BASH_LINENO[0]} ${FUNCNAME[0]:-NOFUNC}() \e[
 ############################################################################
 
 function _mycd_ext {
-    if [[ ${#1} -le 2 || ${1:0:2} != .. ]]; then  # quick filter
-        return 1
-    fi
-
-    case $1 in
-        #(..+([.])) n=$((${#1}-1));;   # pattern enabled by 'shopt -s extglob'
-        ...) n=2;;
-        ....) n=3;;
-        .....) n=4;;
-        ......) n=5;;
-        ..[0-9]) n=${1:2};;
-        *) return 2;;
+    case "$1" in
+        #..+([.]))     n=$((${#1}-1));; # pattern enabled by 'shopt -s extglob'
+        #..+([0-9]))   n=${1:2};;       # pattern enabled by 'shopt -s extglob'
+        ...)          n=2;;
+        ....)         n=3;;
+        .....)        n=4;;
+        ......)       n=5;;
+        .......)      n=6;;
+        ..[1-9])      n=${1:2};;
+        ..[1-9][0-9]) n=${1:2};;
+        *)            return 1;;
     esac
 
-    for _ in $(seq "$n"); do echo -n "../"; done
+    # extend multiple up layers
+    local path
+    for _ in $(seq "$n"); do path="${path}../"; done
+    echo -n $path
+
     return 0
 }
 
@@ -347,16 +350,6 @@ else
 fi
 
 alias cd='_mycd'
-
-alias cd..='cd ..'
-alias cd...='cd ../..'
-alias cd....='cd ../../..'
-alias cd.....='cd ../../../..'
-alias cd......='cd ../../../../..'
-alias cd..2='cd ../..'
-alias cd..3='cd ../../..'
-alias cd..4='cd ../../../..'
-alias cd..5='cd ../../../../..'
 
 #-------------------------------------------------------------------------------------------------
 # cd to the root of git repo
@@ -446,6 +439,7 @@ alias egrep='egrep --color=auto'
 alias screen='screen -U -h 20000'
 alias tmux='tmux -u'
 alias cp='cp -i'
+alias mv='mv -v'
 alias rsync-mv='rsync --remove-source-files -a -vhP'
 alias rsync-cp='rsync -gloptruncvP --delete-excluded'
 alias ff='realpath'
