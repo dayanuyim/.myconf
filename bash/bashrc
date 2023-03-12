@@ -47,6 +47,10 @@ function tmux-export {
     return 0
 }
 
+function tmux-clear {
+    clear && tmux clear-history
+}
+
 ############################################################################
 # Define Variables
 ############################################################################
@@ -449,6 +453,7 @@ alias vim='vim -p'
 alias jobs='jobs -l'
 alias bc='bc -q'
 alias ffmpeg='ffmpeg -hide_banner'
+alias ffprobe='ffprobe -hide_banner'
 
 alias readelf='readelf -W'
 alias objdump='objdump -w -M intel'

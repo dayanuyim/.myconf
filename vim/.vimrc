@@ -202,7 +202,7 @@ endfunction
 au Filetype sh call BashCompOps()
 function BashCompOps()
     let mkfile = '~/Projects/template.c.mk'
-	nnoremap <F5> <ESC>mZ<ESC>:!clear && bash -n '%:p' && shellcheck '%:p'<CR>
+	nnoremap <F5> <ESC>mZ<ESC>:!clear && bash -n '%:p' && shellcheck -x '%:p'<CR>
 	nnoremap <F6> <ESC>:!clear && bash '%:p'<CR>
 	nnoremap <F7> <ESC>:!clear && bash -vx '%:p'<CR>
 	nnoremap <F9> `Z
