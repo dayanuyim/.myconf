@@ -308,10 +308,36 @@ export PS4=$'+\e[33m $BASH_SOURCE:${BASH_LINENO[0]} ${FUNCNAME[0]:-NOFUNC}() \e[
 # cd
 ############################################################################
 
-function _mycd_ext {
+_EC_NO_CD_EXTENSION=77
+
+function _git_repo_root {
+    git -C "$1" rev-parse --show-toplevel 2>/dev/null
+}
+
+function _mycd_gitroot {
+    local root
+    if ! root="$(_git_repo_root)"; then
+        >&2 echo 'not in a GIT Repo.'
+        return 1
+    fi
+
+    if [[ $root != "$PWD" ]]; then
+        echo "$root"
+        return 0
+    fi
+
+    # If curretly in the root of nested submodule, then up to the nearest parent repo.
+    if root="$(_git_repo_root ..)"; then
+        echo "$root"
+        return 0
+    fi
+
+    >&2 echo "already at GIT Repo Root."
+    return 2
+}
+
+function _mycd_uplayer {
     case "$1" in
-        #..+([.]))     n=$((${#1}-1));; # pattern enabled by 'shopt -s extglob'
-        #..+([0-9]))   n=${1:2};;       # pattern enabled by 'shopt -s extglob'
         ...)          n=2;;
         ....)         n=3;;
         .....)        n=4;;
@@ -319,6 +345,8 @@ function _mycd_ext {
         .......)      n=6;;
         ..[1-9])      n=${1:2};;
         ..[1-9][0-9]) n=${1:2};;
+        ..+([.]))     n=$((${#1}-1));; # pattern enabled by 'shopt -s extglob'
+        ..+([0-9]))   n=${1:2};;       # pattern enabled by 'shopt -s extglob'
         *)            return 1;;
     esac
 
@@ -330,9 +358,31 @@ function _mycd_ext {
     return 0
 }
 
+###############################################
+# return
+# ---------------------------------------------
+#                    0: a replacement happened
+#  _EC_NO_CD_EXTENSION: no any replacements
+#                    n: errors
+###############################################
+function _mycd_extension {
+    if [ "$1" == "@gitroot" ]; then
+        _mycd_gitroot
+        return $?
+    fi
+
+    if ! _mycd_uplayer "$@"; then
+        return $_EC_NO_CD_EXTENSION
+    fi
+
+    return 0
+}
+
 function _mycd {
-    if args="$(_mycd_ext "$@")"; then
+    if args="$(_mycd_extension "$@")"; then
         set -- "${args[@]}"
+    elif ec=$? && [ $ec -ne $_EC_NO_CD_EXTENSION ]; then
+        return $ec
     fi
 
     case $_MYCD_STYLE in
@@ -354,36 +404,6 @@ else
 fi
 
 alias cd='_mycd'
-
-#-------------------------------------------------------------------------------------------------
-# cd to the root of git repo
-#-------------------------------------------------------------------------------------------------
-
-function _git_repo_root {
-    git -C "$1" rev-parse --show-toplevel 2>/dev/null
-}
-
-function cd-git-root {
-    local root
-    if ! root="$(_git_repo_root)"; then
-        >&2 echo 'Not a Git repo!'
-        return 1
-    fi
-
-    if [[ $root != "$PWD" ]]; then
-        _mycd "$root"
-        return 0
-    fi
-
-    # If curretly in the root of nested submodule, then up to the nearest parent repo.
-    if root="$(_git_repo_root ..)"; then
-        _mycd "$root"
-        return 0
-    fi
-
-    >&2 echo "Already at Git repo root."
-    return 2
-}
 
 ############################################################################
 # Alias
@@ -456,7 +476,9 @@ alias ffmpeg='ffmpeg -hide_banner'
 alias ffprobe='ffprobe -hide_banner'
 
 alias readelf='readelf -W'
-alias objdump='objdump -w -M intel'
+alias objdump='objdump -w -M intel --demangle'
+alias ltrace='ltrace --demangle'
+alias nm='nm --demangle'
 alias hex2bin='objcopy --input-target=ihex --output-target=binary'
 alias gdb='gdb -q'
 alias ddd='ddd -nh'
