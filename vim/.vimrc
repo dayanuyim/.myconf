@@ -130,9 +130,13 @@ nmap S viwS
 "location
 set ruler
 set nu
+set rnu
 
 "disable bell
 autocmd VimEnter * set vb t_vb=
+
+"remove trailing spaces before saving
+autocmd BufWritePre * :%s/\s\+$//e
 
 "for :make
 set autowrite
@@ -222,6 +226,21 @@ set foldcolumn=0
 set foldlevel=0
 
 map <space> zA
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Binary
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" vim -b : edit binary using xxd-format!
+augroup Binary
+  au!
+  au BufReadPre   *.{bin,exe} let &bin=1
+  au BufReadPost  * if &bin | silent %!xxd -g1
+  au BufReadPost  * set ft=xxd | endif
+  au BufWritePre  * if &bin | %!xxd -r
+  au BufWritePre  * endif
+  au BufWritePost * if &bin | silent %!xxd -g1
+  au BufWritePost * set nomod | endif
+augroup END
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Utilities
