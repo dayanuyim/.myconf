@@ -62,6 +62,7 @@ Plugin 'stevearc/vim-arduino'
 "Plugin 'WolfgangMehner/bash-support'
 Plugin 'kergoth/vim-bitbake'
 Plugin 'vim-scripts/ssa.vim'
+Plugin 'aserebryakov/vim-todo-lists'
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
@@ -166,7 +167,7 @@ map <F4> <ESC>:cnext<CR>
 "F8 -> clean
 "F9 -> return back
 "
-"au BufNewFile,BufRead *.cpp 
+"au BufNewFile,BufRead *.cpp
 au Filetype c call CCompOps()
 function CCompOps()
 	exec "nnoremap <F5> <ESC>mZ<ESC>:make --silent SRCS='%:p'<CR>"
@@ -293,8 +294,8 @@ nnoremap <C-Right> :tabnext<CR>
 nnoremap <silent> <A-Left> :execute 'silent! tabmove ' . (tabpagenr()-2)<CR>
 nnoremap <silent> <A-Right> :execute 'silent! tabmove ' . tabpagenr()<CR>
 
-map <C-t>n		<ESC>:tabnew<CR><ESC>:e 
-"map <C-t>n		<ESC>:tabnew<CR><ESC>:NERDTreeMirror<CR><C-W>l<ESC>:e 
+map <C-t>n		<ESC>:tabnew<CR><ESC>:e
+"map <C-t>n		<ESC>:tabnew<CR><ESC>:NERDTreeMirror<CR><C-W>l<ESC>:e
 
 "last used tab
 let g:lasttab = 1
