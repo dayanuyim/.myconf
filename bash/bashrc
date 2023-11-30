@@ -147,7 +147,7 @@ fi
 # Prompt
 ############################################################################
 
-# Format	     Foreground  Background 
+# Format	     Foreground  Background
 # 0: normal      30: Black   40: Black
 # 1: bold        31: Red     41: Red
 # 4: Underlined  32: Green   42: Green
@@ -227,7 +227,7 @@ function _prompt_user
     if [[ $EUID -eq 0 ]]; then
         _COLOR="\[\e[48;5;160m\e[38;5;255m\]"  #red
         COLOR_="\[\e[48;5;0m\e[38;5;160m\]"
-    else 
+    else
         _COLOR="\[\e[48;5;2m\e[38;5;255m\]"    #green
         COLOR_="\[\e[48;5;0m\e[38;5;2m\]"
     fi
@@ -308,17 +308,15 @@ export PS4=$'+\e[33m $BASH_SOURCE:${BASH_LINENO[0]} ${FUNCNAME[0]:-NOFUNC}() \e[
 # cd
 ############################################################################
 
-_EC_NO_CD_EXTENSION=77
-
 function _git_repo_root {
     git -C "$1" rev-parse --show-toplevel 2>/dev/null
 }
 
-function _mycd_gitroot {
+function _mycd_ext_gitroot {
     local root
     if ! root="$(_git_repo_root)"; then
         >&2 echo 'not in a GIT Repo.'
-        return 1
+        return 101
     fi
 
     if [[ $root != "$PWD" ]]; then
@@ -333,10 +331,10 @@ function _mycd_gitroot {
     fi
 
     >&2 echo "already at GIT Repo Root."
-    return 2
+    return 102
 }
 
-function _mycd_uplayer {
+function _mycd_ext_uplayer {
     case "$1" in
         ...)          n=2;;
         ....)         n=3;;
@@ -358,30 +356,20 @@ function _mycd_uplayer {
     return 0
 }
 
-###############################################
-# return
-# ---------------------------------------------
-#                    0: a replacement happened
-#  _EC_NO_CD_EXTENSION: no any replacements
-#                    n: errors
-###############################################
-function _mycd_extension {
-    if [ "$1" == "@gitroot" ]; then
-        _mycd_gitroot
-        return $?
-    fi
-
-    if ! _mycd_uplayer "$@"; then
-        return $_EC_NO_CD_EXTENSION
-    fi
-
-    return 0
+function _mycd_extensions {
+    case "$1" in
+        "@gitroot") _mycd_ext_gitroot ;;
+        *)          _mycd_ext_uplayer "$@" ;;
+    esac
+    return $?
 }
 
 function _mycd {
-    if args="$(_mycd_extension "$@")"; then
+    # replaced by extensions if success
+    if args="$(_mycd_extensions "$@")"; then
         set -- "${args[@]}"
-    elif ec=$? && [ $ec -ne $_EC_NO_CD_EXTENSION ]; then
+    # need handled errors
+    elif ec=$? && [ $ec -gt 100 ]; then
         return $ec
     fi
 
