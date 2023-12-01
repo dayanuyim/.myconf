@@ -368,6 +368,8 @@ function _mycd_ext_uplayer {
 
 function _mycd_extensions {
     case "$1" in
+        "")         echo -n "$HOME";;      # pushd's similar behavior of cd
+        "-")        echo -n "";;           # pushd's similar behavior of cd
         "@gitroot") _mycd_ext_gitroot ;;
         *)          _mycd_ext_uplayer "$@" ;;
     esac
@@ -375,33 +377,55 @@ function _mycd_extensions {
 }
 
 function _mycd {
-    # replaced by extensions if success
-    if args="$(_mycd_extensions "$@")"; then
-        set -- "${args[@]}"
-    # need handled errors
-    elif ec=$? && [ $ec -gt 100 ]; then
+    if arg="$(_mycd_extensions "$@")"; then  # replaced by extensions if success
+        if [ -z "$arg" ]; then
+            set --
+        else
+            set -- "$arg"
+        fi
+    elif ec=$? && [ $ec -gt 100 ]; then         # need handled errors
         return $ec
     fi
 
-    case $_MYCD_STYLE in
-        L) builtin cd "$@" &&  ls -C -w "$(tput cols)" --color=always        | awk '{if(NR > 5){print "...(more)"; exit} else print $0}' ;;
-        m) builtin cd "$@" && gls -C -w "$(tput cols)" --color=always        | awk '{if(NR > 5){print "...(more)"; exit} else print $0}' ;;
-        M) builtin cd "$@" && COLUMNS="$(tput cols)" CLICOLOR_FORCE=1 ls -CG | awk '{if(NR > 5){print "...(more)"; exit} else print $0}' ;;
-    esac
+    if [ ${#DIRSTACK[@]} -ge 10 ]; then  # limit the size of the stack
+        popd -n -0 > /dev/null
+    fi
+    _mypushd "$@" &&_ls_color_cols | awk '{if(NR > 5){print "...(more)"; exit} else print $0}'
 }
 
-# not mac / linux
-if ! uname -a | grep -q Darwin; then
-    _MYCD_STYLE=L
-# mac with gnu ls
-elif which -s gls; then
-    _MYCD_STYLE=m
-# mac with builtin ls
-else
-    _MYCD_STYLE=M
+function _mypushd {
+    # because the output of 'pushd' may contains the result of CDPATH match, discard it and call 'dirs' on our own with a prompt
+    builtin pushd "$@" > /dev/null && _mydirs
+}
+
+function _mypopd {
+    builtin popd "$@" > /dev/null && _mydirs
+}
+
+function _mydirs {
+    local sp=" "
+    if [ "$1" == "-v" ] || [ "$1" == "-p" ]; then
+       sp="\n"
+    fi
+
+    local _HL="\e[38;5;222m\e[48;5;236m"
+    local HL_="\e[0m\e[38;5;236m\e[38;5;222m"
+
+    echo -en "${_HL}DIRSTACK${HL_}$sp" && builtin dirs "$@" && echo -en "$NC"
+}
+
+if ! uname -a | grep -q Darwin; then                           # not mac -> linux
+    function _ls_color_cols(){  ls -C -w "$(tput cols)" --color=always; }
+elif which -s gls; then                                        # mac with gnu ls
+    function _ls_color_cols(){ gls -C -w "$(tput cols)" --color=always; }
+else                                                           # original mac ls
+    function _ls_color_cols(){ COLUMNS="$(tput cols)" CLICOLOR_FORCE=1 ls -CG; }
 fi
 
 alias cd='_mycd'
+alias pd='_mypushd'
+alias bd='_mypopd'
+alias dirs='_mydirs -v'
 
 ############################################################################
 # Alias
