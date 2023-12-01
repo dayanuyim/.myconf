@@ -308,6 +308,16 @@ export PS4=$'+\e[33m $BASH_SOURCE:${BASH_LINENO[0]} ${FUNCNAME[0]:-NOFUNC}() \e[
 # cd
 ############################################################################
 
+CDPATH=$HOME
+CDPATH=$CDPATH:$HOME/Works
+CDPATH=$CDPATH:$HOME/Tests
+CDPATH=$CDPATH:$HOME/Documents
+CDPATH=$CDPATH:$HOME/Music
+CDPATH=$CDPATH:$HOME/Pictures
+CDPATH=$CDPATH:$HOME/Movies
+CDPATH=$CDPATH:$HOME/Videos
+CDPATH=$CDPATH:..
+
 function _git_repo_root {
     git -C "$1" rev-parse --show-toplevel 2>/dev/null
 }
