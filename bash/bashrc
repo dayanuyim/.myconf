@@ -316,6 +316,8 @@ CDPATH=$CDPATH:$HOME/Music
 CDPATH=$CDPATH:$HOME/Pictures
 CDPATH=$CDPATH:$HOME/Movies
 CDPATH=$CDPATH:$HOME/Videos
+CDPATH=$CDPATH:$HOME/Dropbox
+CDPATH=$CDPATH:/Volumes/bulk/Movie
 CDPATH=$CDPATH:..
 
 function _git_repo_root {
