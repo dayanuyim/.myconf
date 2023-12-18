@@ -73,6 +73,7 @@ esac
 export _PROMPT_GIT=${_PROMPT_GIT:-1}
 export _PROMPT_SMILEY=${_PROMPT_SMILEY:-0}
 export _PROMPT_POWERLINE=${_PROMPT_POWERLINE:-1}
+export _PROMPT_DIRSTACK=${_PROMPT_DIRSTACK:-0}
 
 if [ -z "$_PROMPT_VARS" ]; then
     export _PROMPT_VARS=(IP PORT ARCH CROSS_COMPILE INSTALL_MOD_PATH HOST KEY ID)
@@ -308,7 +309,8 @@ export PS4=$'+\e[33m $BASH_SOURCE:${BASH_LINENO[0]} ${FUNCNAME[0]:-NOFUNC}() \e[
 # cd
 ############################################################################
 
-CDPATH=$HOME
+CDPATH=.
+CDPATH=$CDPATH:$HOME
 CDPATH=$CDPATH:$HOME/Works
 CDPATH=$CDPATH:$HOME/Tests
 CDPATH=$CDPATH:$HOME/Documents
@@ -397,11 +399,17 @@ function _mycd {
 
 function _mypushd {
     # because the output of 'pushd' may contains the result of CDPATH match, discard it and call 'dirs' on our own with a prompt
-    builtin pushd "$@" > /dev/null && _mydirs
+    builtin pushd "$@" > /dev/null
+    if [ $_PROMPT_DIRSTACK == 1 ]; then
+        _mydirs
+    fi
 }
 
 function _mypopd {
-    builtin popd "$@" > /dev/null && _mydirs
+    builtin popd "$@" > /dev/null
+    if [ $_PROMPT_DIRSTACK == 1 ]; then
+        _mydirs
+    fi
 }
 
 function _mydirs {
