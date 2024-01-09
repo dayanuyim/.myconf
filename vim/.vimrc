@@ -374,6 +374,13 @@ if has("unix")
 	let g:clang_user_options='|| exit 0'
 endif
 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" GPG
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+if has("unix")
+    let g:GPGPreferArmor=1
+    let g:GPGDefaultRecipients=['dayanuyim@gmail.com']
+endif
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " File Setting
