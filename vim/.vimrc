@@ -104,6 +104,10 @@ autocmd FileType js      setlocal tabstop=2 shiftwidth=2 softtabstop=2
 autocmd FileType ts      setlocal tabstop=2 shiftwidth=2 softtabstop=2
 autocmd FileType crontab setlocal tabstop=8 noexpandtab
 
+set showcmd
+
+let mapleader = ','
+
 "search
 set ignorecase
 set smartcase
