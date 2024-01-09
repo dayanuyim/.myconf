@@ -20,64 +20,51 @@ elseif has("unix")
 endif
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Vundle
+" vim-plug
 "---------------------------------------------------------------------
-"   git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
-"   Launch VIM and run :PluginInstall
+"   (linux) curl -fLo         ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+"   (win)   curl -fLo $HOME/vimfiles/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-filetype off                  " required
 
-" set the runtime path to include Vundle and initialize
-if has("win32")
-    set rtp+=~/vimfiles/bundle/Vundle.vim
-elseif has("unix")
-    set rtp+=~/.vim/bundle/Vundle.vim
-endif
+call plug#begin()
+" The default plugin directory will be as follows:
+"   - Vim (Linux/macOS): '~/.vim/plugged'
+"   - Vim (Windows): '~/vimfiles/plugged'
+"   - Neovim (Linux/macOS/Windows): stdpath('data') . '/plugged'
+" You can specify a custom plugin directory by passing it as the argument
+"   - e.g. `call plug#begin('~/.vim/plugged')`
+"   - Avoid using standard Vim directory names like 'plugin'
 
-call vundle#begin()
-" alternatively, pass a path where Vundle should install plugins
-"call vundle#begin('~/some/path/here')
-
-" let Vundle manage Vundle, required
-Plugin 'VundleVim/Vundle.vim'
-
-Plugin 'scrooloose/nerdtree'
-Plugin 'ervandew/supertab'
-Plugin 'godlygeek/tabular'
-Plugin 'tpope/vim-surround'
-Plugin 'tpope/vim-repeat'
+Plug 'preservim/nerdtree', { 'on': 'NERDTreeToggle' }
+Plug 'ervandew/supertab'
+Plug 'godlygeek/tabular'
+Plug 'tpope/vim-surround'
+Plug 'tpope/vim-repeat'
+Plug 'jamessan/vim-gnupg'
 "syntax ------------------------
-Plugin 'rust-lang/rust.vim'
-Plugin 'tomlion/vim-solidity'
-Plugin 'leafgarland/typescript-vim'
-Plugin 'pangloss/vim-javascript'
-Plugin 'elzr/vim-json'
-Plugin 'plasticboy/vim-markdown'
-Plugin 'shiracamus/vim-syntax-x86-objdump-d'
-"Plugin 'tpope/vim-markdown'
-Plugin 'vim-scripts/gdl.vim'
-Plugin 'vim-scripts/openvpn'
-Plugin 'cespare/vim-toml'
-Plugin 'stevearc/vim-arduino'
-"Plugin 'WolfgangMehner/bash-support'
-Plugin 'kergoth/vim-bitbake'
-Plugin 'vim-scripts/ssa.vim'
-Plugin 'aserebryakov/vim-todo-lists'
+Plug 'rust-lang/rust.vim'
+Plug 'tomlion/vim-solidity'
+Plug 'leafgarland/typescript-vim'
+Plug 'pangloss/vim-javascript'
+Plug 'elzr/vim-json'
+Plug 'plasticboy/vim-markdown'
+Plug 'shiracamus/vim-syntax-x86-objdump-d'
+"Plug 'tpope/vim-markdown'
+Plug 'vim-scripts/gdl.vim'
+Plug 'vim-scripts/openvpn'
+Plug 'cespare/vim-toml'
+Plug 'stevearc/vim-arduino'
+"Plug 'WolfgangMehner/bash-support'
+Plug 'kergoth/vim-bitbake'
+Plug 'vim-scripts/ssa.vim'
+Plug 'aserebryakov/vim-todo-lists'
 
-" All of your Plugins must be added before the following line
-call vundle#end()            " required
-filetype plugin indent on    " required
-" To ignore plugin indent changes, instead use:
-"filetype plugin on
-"
-" Brief help
-" :PluginList       - lists configured plugins
-" :PluginInstall    - installs plugins; append `!` to update or just :PluginUpdate
-" :PluginSearch foo - searches for foo; append `!` to refresh local cache
-" :PluginClean      - confirms removal of unused plugins; append `!` to auto-approve removal
-"
-" see :h vundle for more details or wiki for FAQ
-" Put your non-Plugin stuff after this line
+" Initialize plugin system
+" - Automatically executes `filetype plugin indent on` and `syntax enable`.
+call plug#end()
+" You can revert the settings after the call like so:
+"   filetype indent off   " Disable file-type-specific indentation
+"   syntax off            " Disable syntax highlighting
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Plugin Settings
