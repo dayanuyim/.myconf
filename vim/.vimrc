@@ -106,6 +106,11 @@ autocmd FileType crontab setlocal tabstop=8 noexpandtab
 
 set showcmd
 
+" eanble mouse
+set ttymouse=xterm2
+set mouse=a
+
+" change leader key
 let mapleader = ','
 
 "search
