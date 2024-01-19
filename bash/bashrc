@@ -55,10 +55,6 @@ function tmux-clear {
 # Define Variables
 ############################################################################
 
-export LANG=en_US.UTF-8
-export LC_ALL=$LANG
-export EDITOR=vim
-export VISUAL=vim
 export GPG_TTY=$(tty)
 
 # enfore xterm-256color if not within TMUX

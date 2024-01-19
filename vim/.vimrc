@@ -41,6 +41,8 @@ Plug 'godlygeek/tabular'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-repeat'
 Plug 'jamessan/vim-gnupg'
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf.vim'
 "syntax ------------------------
 Plug 'rust-lang/rust.vim'
 Plug 'tomlion/vim-solidity'
@@ -52,11 +54,11 @@ Plug 'shiracamus/vim-syntax-x86-objdump-d'
 "Plug 'tpope/vim-markdown'
 Plug 'vim-scripts/gdl.vim'
 Plug 'vim-scripts/openvpn'
+Plug 'vim-scripts/ssa.vim'
 Plug 'cespare/vim-toml'
 Plug 'stevearc/vim-arduino'
 "Plug 'WolfgangMehner/bash-support'
 Plug 'kergoth/vim-bitbake'
-Plug 'vim-scripts/ssa.vim'
 Plug 'aserebryakov/vim-todo-lists'
 
 " Initialize plugin system
@@ -290,8 +292,9 @@ nnoremap <C-Right> :tabnext<CR>
 nnoremap <silent> <A-Left> :execute 'silent! tabmove ' . (tabpagenr()-2)<CR>
 nnoremap <silent> <A-Right> :execute 'silent! tabmove ' . tabpagenr()<CR>
 
-map <C-t>n		<ESC>:tabnew<CR><ESC>:e
-"map <C-t>n		<ESC>:tabnew<CR><ESC>:NERDTreeMirror<CR><C-W>l<ESC>:e
+"map <C-t>n		<ESC>:tabnew<CR><ESC>:e<SPACE>
+"map <C-t>n		<ESC>:tabnew<CR><ESC>:NERDTreeMirror<CR><C-W>l<ESC>:e<SPACE>
+map <C-t>n		<ESC>:tabnew<CR><ESC>:FZF<CR>
 
 "last used tab
 let g:lasttab = 1
