@@ -520,6 +520,7 @@ alias curl-github='curl -s -H "Accept: application/vnd.github.v3+json"'
 alias curl-ufo='curl -s -H "Accept: application/ufo"'
 alias 7z-quick='7z a -t7z -m0=lzma -mx=9 -mfb=64 -md=32m -ms=on'
 alias lsblk='lsblk -o "LABEL,NAME,MAJ:MIN,RM,SIZE,RO,TYPE,FSTYPE,MOUNTPOINT"'
+alias shrink-photo='mv photo photo.orig && mirror shrink-image photo.orig photo && trash photo.orig'
 
 # Alias definitions.
 # You may want to put all your additions into a separate file like
