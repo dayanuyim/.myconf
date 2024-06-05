@@ -147,6 +147,9 @@ set autowrite
 "cmap w!! w !sudo tee >/dev/null %
 cnoremap w!! execute 'silent! write !sudo tee % >/dev/null' <bar> edit!
 
+" copy to the clipboard in visual mode
+vnoremap <C-c> "+y
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Compile
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
