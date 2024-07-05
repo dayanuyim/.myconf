@@ -20,62 +20,53 @@ elseif has("unix")
 endif
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Vundle
+" vim-plug
 "---------------------------------------------------------------------
-"   git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
-"   Launch VIM and run :PluginInstall
+"   (linux) curl -fLo         ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+"   (win)   curl -fLo $HOME/vimfiles/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-filetype off                  " required
 
-" set the runtime path to include Vundle and initialize
-if has("win32")
-    set rtp+=~/vimfiles/bundle/Vundle.vim
-elseif has("unix")
-    set rtp+=~/.vim/bundle/Vundle.vim
-endif
+call plug#begin()
+" The default plugin directory will be as follows:
+"   - Vim (Linux/macOS): '~/.vim/plugged'
+"   - Vim (Windows): '~/vimfiles/plugged'
+"   - Neovim (Linux/macOS/Windows): stdpath('data') . '/plugged'
+" You can specify a custom plugin directory by passing it as the argument
+"   - e.g. `call plug#begin('~/.vim/plugged')`
+"   - Avoid using standard Vim directory names like 'plugin'
 
-call vundle#begin()
-" alternatively, pass a path where Vundle should install plugins
-"call vundle#begin('~/some/path/here')
-
-" let Vundle manage Vundle, required
-Plugin 'VundleVim/Vundle.vim'
-
-Plugin 'scrooloose/nerdtree'
-Plugin 'ervandew/supertab'
-Plugin 'godlygeek/tabular'
-Plugin 'tpope/vim-surround'
-Plugin 'tpope/vim-repeat'
+Plug 'preservim/nerdtree', { 'on': 'NERDTreeToggle' }
+Plug 'ervandew/supertab'
+Plug 'godlygeek/tabular'
+Plug 'tpope/vim-surround'
+Plug 'tpope/vim-repeat'
+Plug 'jamessan/vim-gnupg'
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf.vim'
 "syntax ------------------------
-Plugin 'rust-lang/rust.vim'
-Plugin 'tomlion/vim-solidity'
-Plugin 'leafgarland/typescript-vim'
-Plugin 'pangloss/vim-javascript'
-Plugin 'elzr/vim-json'
-Plugin 'plasticboy/vim-markdown'
-"Plugin 'tpope/vim-markdown'
-Plugin 'vim-scripts/gdl.vim'
-Plugin 'vim-scripts/openvpn'
-Plugin 'cespare/vim-toml'
-Plugin 'stevearc/vim-arduino'
-"Plugin 'WolfgangMehner/bash-support'
-Plugin 'kergoth/vim-bitbake'
-Plugin 'vim-scripts/ssa.vim'
+Plug 'rust-lang/rust.vim'
+Plug 'tomlion/vim-solidity'
+Plug 'leafgarland/typescript-vim'
+Plug 'pangloss/vim-javascript'
+Plug 'elzr/vim-json'
+Plug 'plasticboy/vim-markdown'
+Plug 'shiracamus/vim-syntax-x86-objdump-d'
+"Plug 'tpope/vim-markdown'
+Plug 'vim-scripts/gdl.vim'
+Plug 'vim-scripts/openvpn'
+Plug 'vim-scripts/ssa.vim'
+Plug 'cespare/vim-toml'
+Plug 'stevearc/vim-arduino'
+"Plug 'WolfgangMehner/bash-support'
+Plug 'kergoth/vim-bitbake'
+Plug 'aserebryakov/vim-todo-lists'
 
-" All of your Plugins must be added before the following line
-call vundle#end()            " required
-filetype plugin indent on    " required
-" To ignore plugin indent changes, instead use:
-"filetype plugin on
-"
-" Brief help
-" :PluginList       - lists configured plugins
-" :PluginInstall    - installs plugins; append `!` to update or just :PluginUpdate
-" :PluginSearch foo - searches for foo; append `!` to refresh local cache
-" :PluginClean      - confirms removal of unused plugins; append `!` to auto-approve removal
-"
-" see :h vundle for more details or wiki for FAQ
-" Put your non-Plugin stuff after this line
+" Initialize plugin system
+" - Automatically executes `filetype plugin indent on` and `syntax enable`.
+call plug#end()
+" You can revert the settings after the call like so:
+"   filetype indent off   " Disable file-type-specific indentation
+"   syntax off            " Disable syntax highlighting
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Plugin Settings
@@ -115,6 +106,15 @@ autocmd FileType js      setlocal tabstop=2 shiftwidth=2 softtabstop=2
 autocmd FileType ts      setlocal tabstop=2 shiftwidth=2 softtabstop=2
 autocmd FileType crontab setlocal tabstop=8 noexpandtab
 
+set showcmd
+
+" eanble mouse
+set ttymouse=xterm2
+set mouse=a
+
+" change leader key
+let mapleader = ','
+
 "search
 set ignorecase
 set smartcase
@@ -129,9 +129,13 @@ nmap S viwS
 "location
 set ruler
 set nu
+set rnu
 
 "disable bell
 autocmd VimEnter * set vb t_vb=
+
+"remove trailing spaces before saving
+autocmd BufWritePre * :%s/\s\+$//e
 
 "for :make
 set autowrite
@@ -142,6 +146,9 @@ set autowrite
 " write with sudo
 "cmap w!! w !sudo tee >/dev/null %
 cnoremap w!! execute 'silent! write !sudo tee % >/dev/null' <bar> edit!
+
+" copy to the clipboard in visual mode
+vnoremap <C-c> "+y
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Compile
@@ -161,7 +168,7 @@ map <F4> <ESC>:cnext<CR>
 "F8 -> clean
 "F9 -> return back
 "
-"au BufNewFile,BufRead *.cpp 
+"au BufNewFile,BufRead *.cpp
 au Filetype c call CCompOps()
 function CCompOps()
 	exec "nnoremap <F5> <ESC>mZ<ESC>:make --silent SRCS='%:p'<CR>"
@@ -223,6 +230,21 @@ set foldlevel=0
 map <space> zA
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Binary
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" vim -b : edit binary using xxd-format!
+augroup Binary
+  au!
+  au BufReadPre   *.{bin,exe} let &bin=1
+  au BufReadPost  * if &bin | silent %!xxd -g1
+  au BufReadPost  * set ft=xxd | endif
+  au BufWritePre  * if &bin | %!xxd -r
+  au BufWritePre  * endif
+  au BufWritePost * if &bin | silent %!xxd -g1
+  au BufWritePost * set nomod | endif
+augroup END
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Utilities
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " swap two words
@@ -273,8 +295,9 @@ nnoremap <C-Right> :tabnext<CR>
 nnoremap <silent> <A-Left> :execute 'silent! tabmove ' . (tabpagenr()-2)<CR>
 nnoremap <silent> <A-Right> :execute 'silent! tabmove ' . tabpagenr()<CR>
 
-map <C-t>n		<ESC>:tabnew<CR><ESC>:e 
-"map <C-t>n		<ESC>:tabnew<CR><ESC>:NERDTreeMirror<CR><C-W>l<ESC>:e 
+"map <C-t>n		<ESC>:tabnew<CR><ESC>:e<SPACE>
+"map <C-t>n		<ESC>:tabnew<CR><ESC>:NERDTreeMirror<CR><C-W>l<ESC>:e<SPACE>
+map <C-t>n		<ESC>:tabnew<CR><ESC>:FZF<CR>
 
 "last used tab
 let g:lasttab = 1
@@ -362,6 +385,13 @@ if has("unix")
 	let g:clang_user_options='|| exit 0'
 endif
 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" GPG
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+if has("unix")
+    let g:GPGPreferArmor=1
+    let g:GPGDefaultRecipients=['dayanuyim@gmail.com']
+endif
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " File Setting

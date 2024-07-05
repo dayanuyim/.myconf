@@ -12,7 +12,8 @@
 
 ############################################################################
 
-export LC_ALL="en_US.UTF-8"
+export LANG=en_US.UTF-8
+export LC_ALL=$LANG
 
 export EDITOR=vim
 export VISUAL=vim
@@ -21,27 +22,20 @@ export VISUAL=vim
 export PAGER=less
 export LESS=FRX
 
-# set TERM if not in tmux
-if [[ $TERM != screen-256color ]]; then
-    export TERM=xterm-256color
-fi
-
-export _PROMPT_VARS=(IP PORT)
+export FZF_DEFAULT_COMMAND='rg --files'
 
 export GOPATH=$HOME/go
-exportPATH "$GOPATH/bin"
 
-# set PATH so it includes user's private bin if it exists
+exportPATH -d "/opt/ufo/bin"
+exportPATH -d "$GOPATH/bin"
 exportPATH -d "$HOME/bin"
 exportPATH -d "$HOME/.local/bin"
-
-# other packages
-exportPATH -d "/opt/ufo/bin"
 exportPATH -d "$HOME/.config/composer/vendor/bin"
+exportPATH -d "$HOME/.cargo/bin"
+exportPATH -d "$HOME/.vim/plugged/fzf/bin"
 
-#exportLIBRARY_PATH    -d "$HOME/ida-6.9"
-#exportLD_LIBRARY_PATH -d "$HOME/ida-6.9"
-
+exportLIBRARY_PATH    -d "$HOME/ida-6.9"
+exportLD_LIBRARY_PATH -d "$HOME/ida-6.9"
 
 ############################################################################
 

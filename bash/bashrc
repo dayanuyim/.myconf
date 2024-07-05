@@ -55,10 +55,7 @@ function tmux-clear {
 # Define Variables
 ############################################################################
 
-export LANG=en_US.UTF-8
-export LC_ALL=$LANG
-export EDITOR=vim
-export VISUAL=vim
+export GPG_TTY=$(tty)
 
 # enfore xterm-256color if not within TMUX
 case "$TERM" in
@@ -73,6 +70,7 @@ esac
 export _PROMPT_GIT=${_PROMPT_GIT:-1}
 export _PROMPT_SMILEY=${_PROMPT_SMILEY:-0}
 export _PROMPT_POWERLINE=${_PROMPT_POWERLINE:-1}
+export _PROMPT_DIRSTACK=${_PROMPT_DIRSTACK:-0}
 
 if [ -z "$_PROMPT_VARS" ]; then
     export _PROMPT_VARS=(IP PORT ARCH CROSS_COMPILE INSTALL_MOD_PATH HOST KEY ID)
@@ -133,7 +131,7 @@ shopt -s checkwinsize
 # this, if it's already enabled in /etc/bash.bashrc and /etc/profile
 # sources /etc/bash.bashrc).
 if ! shopt -oq posix; then
-  if which brew >/dev/null && [ -f $(brew --prefix)/etc/bash_completion ]; then
+  if which brew &>/dev/null && [ -f $(brew --prefix)/etc/bash_completion ]; then
     . $(brew --prefix)/etc/bash_completion
   elif [ -f /usr/share/bash-completion/bash_completion ]; then
     . /usr/share/bash-completion/bash_completion
@@ -147,7 +145,7 @@ fi
 # Prompt
 ############################################################################
 
-# Format	     Foreground  Background 
+# Format	     Foreground  Background
 # 0: normal      30: Black   40: Black
 # 1: bold        31: Red     41: Red
 # 4: Underlined  32: Green   42: Green
@@ -227,7 +225,7 @@ function _prompt_user
     if [[ $EUID -eq 0 ]]; then
         _COLOR="\[\e[48;5;160m\e[38;5;255m\]"  #red
         COLOR_="\[\e[48;5;0m\e[38;5;160m\]"
-    else 
+    else
         _COLOR="\[\e[48;5;2m\e[38;5;255m\]"    #green
         COLOR_="\[\e[48;5;0m\e[38;5;2m\]"
     fi
@@ -308,10 +306,47 @@ export PS4=$'+\e[33m $BASH_SOURCE:${BASH_LINENO[0]} ${FUNCNAME[0]:-NOFUNC}() \e[
 # cd
 ############################################################################
 
-function _mycd_ext {
+CDPATH=.
+CDPATH=$CDPATH:$HOME
+CDPATH=$CDPATH:$HOME/Works
+CDPATH=$CDPATH:$HOME/Tests
+CDPATH=$CDPATH:$HOME/Documents
+CDPATH=$CDPATH:$HOME/Music
+CDPATH=$CDPATH:$HOME/Pictures
+CDPATH=$CDPATH:$HOME/Movies
+CDPATH=$CDPATH:$HOME/Videos
+CDPATH=$CDPATH:$HOME/Dropbox
+CDPATH=$CDPATH:/Volumes/bulk/Movie
+CDPATH=$CDPATH:..
+
+function _git_repo_root {
+    git -C "$1" rev-parse --show-toplevel 2>/dev/null
+}
+
+function _mycd_ext_gitroot {
+    local root
+    if ! root="$(_git_repo_root)"; then
+        >&2 echo 'not in a GIT Repo.'
+        return 101
+    fi
+
+    if [[ $root != "$PWD" ]]; then
+        echo "$root"
+        return 0
+    fi
+
+    # If curretly in the root of nested submodule, then up to the nearest parent repo.
+    if root="$(_git_repo_root ..)"; then
+        echo "$root"
+        return 0
+    fi
+
+    >&2 echo "already at GIT Repo Root."
+    return 102
+}
+
+function _mycd_ext_uplayer {
     case "$1" in
-        #..+([.]))     n=$((${#1}-1));; # pattern enabled by 'shopt -s extglob'
-        #..+([0-9]))   n=${1:2};;       # pattern enabled by 'shopt -s extglob'
         ...)          n=2;;
         ....)         n=3;;
         .....)        n=4;;
@@ -319,6 +354,8 @@ function _mycd_ext {
         .......)      n=6;;
         ..[1-9])      n=${1:2};;
         ..[1-9][0-9]) n=${1:2};;
+        ..+([.]))     n=$((${#1}-1));; # pattern enabled by 'shopt -s extglob'
+        ..+([0-9]))   n=${1:2};;       # pattern enabled by 'shopt -s extglob'
         *)            return 1;;
     esac
 
@@ -330,60 +367,72 @@ function _mycd_ext {
     return 0
 }
 
-function _mycd {
-    if args="$(_mycd_ext "$@")"; then
-        set -- "${args[@]}"
-    fi
-
-    case $_MYCD_STYLE in
-        L) builtin cd "$@" &&  ls -C -w "$(tput cols)" --color=always        | awk '{if(NR > 5){print "...(more)"; exit} else print $0}' ;;
-        m) builtin cd "$@" && gls -C -w "$(tput cols)" --color=always        | awk '{if(NR > 5){print "...(more)"; exit} else print $0}' ;;
-        M) builtin cd "$@" && COLUMNS="$(tput cols)" CLICOLOR_FORCE=1 ls -CG | awk '{if(NR > 5){print "...(more)"; exit} else print $0}' ;;
+function _mycd_extensions {
+    case "$1" in
+        "")         echo -n "$HOME";;      # pushd's similar behavior of cd
+        "-")        echo -n "";;           # pushd's similar behavior of cd
+        "@gitroot") _mycd_ext_gitroot ;;
+        *)          _mycd_ext_uplayer "$@" ;;
     esac
+    return $?
 }
 
-# not mac / linux
-if ! uname -a | grep -q Darwin; then
-    _MYCD_STYLE=L
-# mac with gnu ls
-elif which -s gls; then
-    _MYCD_STYLE=m
-# mac with builtin ls
-else
-    _MYCD_STYLE=M
+function _mycd {
+    if arg="$(_mycd_extensions "$@")"; then  # replaced by extensions if success
+        if [ -z "$arg" ]; then
+            set --
+        else
+            set -- "$arg"
+        fi
+    elif ec=$? && [ $ec -gt 100 ]; then         # need handled errors
+        return $ec
+    fi
+
+    if [ ${#DIRSTACK[@]} -ge 10 ]; then  # limit the size of the stack
+        popd -n -0 > /dev/null
+    fi
+    _mypushd "$@" &&_ls_color_cols | awk '{if(NR > 5){print "...(more)"; exit} else print $0}'
+}
+
+function _mypushd {
+    # because the output of 'pushd' may contains the result of CDPATH match, discard it and call 'dirs' on our own with a prompt
+    builtin pushd "$@" > /dev/null
+    if [ $_PROMPT_DIRSTACK == 1 ]; then
+        _mydirs
+    fi
+}
+
+function _mypopd {
+    builtin popd "$@" > /dev/null
+    if [ $_PROMPT_DIRSTACK == 1 ]; then
+        _mydirs
+    fi
+}
+
+function _mydirs {
+    local sp=" "
+    if [ "$1" == "-v" ] || [ "$1" == "-p" ]; then
+       sp="\n"
+    fi
+
+    local _HL="\e[38;5;222m\e[48;5;236m"
+    local HL_="\e[0m\e[38;5;236m\e[38;5;222m"
+
+    echo -en "${_HL}DIRSTACK${HL_}$sp" && builtin dirs "$@" && echo -en "$NC"
+}
+
+if ! uname -a | grep -q Darwin; then                           # not mac -> linux
+    function _ls_color_cols(){  ls -C -w "$(tput cols)" --color=always; }
+elif which -s gls; then                                        # mac with gnu ls
+    function _ls_color_cols(){ gls -C -w "$(tput cols)" --color=always; }
+else                                                           # original mac ls
+    function _ls_color_cols(){ COLUMNS="$(tput cols)" CLICOLOR_FORCE=1 ls -CG; }
 fi
 
 alias cd='_mycd'
-
-#-------------------------------------------------------------------------------------------------
-# cd to the root of git repo
-#-------------------------------------------------------------------------------------------------
-
-function _git_repo_root {
-    git -C "$1" rev-parse --show-toplevel 2>/dev/null
-}
-
-function cd-git-root {
-    local root
-    if ! root="$(_git_repo_root)"; then
-        >&2 echo 'Not a Git repo!'
-        return 1
-    fi
-
-    if [[ $root != "$PWD" ]]; then
-        _mycd "$root"
-        return 0
-    fi
-
-    # If curretly in the root of nested submodule, then up to the nearest parent repo.
-    if root="$(_git_repo_root ..)"; then
-        _mycd "$root"
-        return 0
-    fi
-
-    >&2 echo "Already at Git repo root."
-    return 2
-}
+alias pd='_mypushd'
+alias bd='_mypopd'
+alias dirs='_mydirs -v'
 
 ############################################################################
 # Alias
@@ -456,7 +505,9 @@ alias ffmpeg='ffmpeg -hide_banner'
 alias ffprobe='ffprobe -hide_banner'
 
 alias readelf='readelf -W'
-alias objdump='objdump -w -M intel'
+alias objdump='objdump -w -M intel --demangle'
+alias ltrace='ltrace --demangle'
+alias nm='nm --demangle'
 alias hex2bin='objcopy --input-target=ihex --output-target=binary'
 alias gdb='gdb -q'
 alias ddd='ddd -nh'
@@ -469,6 +520,7 @@ alias curl-github='curl -s -H "Accept: application/vnd.github.v3+json"'
 alias curl-ufo='curl -s -H "Accept: application/ufo"'
 alias 7z-quick='7z a -t7z -m0=lzma -mx=9 -mfb=64 -md=32m -ms=on'
 alias lsblk='lsblk -o "LABEL,NAME,MAJ:MIN,RM,SIZE,RO,TYPE,FSTYPE,MOUNTPOINT"'
+alias ipfs-cid-hash='ipfs cid format -b base16 -f "%h %D"'
 
 # Alias definitions.
 # You may want to put all your additions into a separate file like
@@ -486,3 +538,5 @@ fi
 if [[ -d $HOME/perl5/lib/perl5 ]]; then
     eval "$(perl -I"$HOME/perl5/lib/perl5" -Mlocal::lib)"
 fi
+
+eval "$(fzf --bash)"
