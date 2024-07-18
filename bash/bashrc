@@ -55,6 +55,8 @@ function tmux-clear {
 # Define Variables
 ############################################################################
 
+export GPG_TTY=$(tty)
+
 # enfore xterm-256color if not within TMUX
 case "$TERM" in
     *-256color) ;;
@@ -129,7 +131,7 @@ shopt -s checkwinsize
 # this, if it's already enabled in /etc/bash.bashrc and /etc/profile
 # sources /etc/bash.bashrc).
 if ! shopt -oq posix; then
-  if which brew >/dev/null && [ -f $(brew --prefix)/etc/bash_completion ]; then
+  if which brew &>/dev/null && [ -f $(brew --prefix)/etc/bash_completion ]; then
     . $(brew --prefix)/etc/bash_completion
   elif [ -f /usr/share/bash-completion/bash_completion ]; then
     . /usr/share/bash-completion/bash_completion
@@ -518,6 +520,7 @@ alias curl-github='curl -s -H "Accept: application/vnd.github.v3+json"'
 alias curl-ufo='curl -s -H "Accept: application/ufo"'
 alias 7z-quick='7z a -t7z -m0=lzma -mx=9 -mfb=64 -md=32m -ms=on'
 alias lsblk='lsblk -o "LABEL,NAME,MAJ:MIN,RM,SIZE,RO,TYPE,FSTYPE,MOUNTPOINT"'
+alias ipfs-cid-hash='ipfs cid format -b base16 -f "%h %D"'
 
 # Alias definitions.
 # You may want to put all your additions into a separate file like
@@ -535,3 +538,5 @@ fi
 if [[ -d $HOME/perl5/lib/perl5 ]]; then
     eval "$(perl -I"$HOME/perl5/lib/perl5" -Mlocal::lib)"
 fi
+
+eval "$(fzf --bash)"
