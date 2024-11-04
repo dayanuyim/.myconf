@@ -147,8 +147,11 @@ set autowrite
 "cmap w!! w !sudo tee >/dev/null %
 cnoremap w!! execute 'silent! write !sudo tee % >/dev/null' <bar> edit!
 
-" copy to the clipboard in visual mode
+" copy/paste to/from the clipboard
 vnoremap <C-c> "+y
+vnoremap <C-x> "+c
+vnoremap <C-v> c<ESC>"+p
+inoremap <C-v> <C-r><C-o>+
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Compile
@@ -461,7 +464,7 @@ endif
 map <F10> <ESC>:%s/\e\[[0-9;]*m//g<CR>:%s/\r/\r/g<CR>
 
 " Simple Chinese -> Traditional Chinese
-map <F11> <ESC>:%!opencc<CR>
+map <F11> <ESC>:%!opencc-my<CR>
 
 " To Big5
 "map <F11> <ESC>:set fileencoding=big5<CR>
