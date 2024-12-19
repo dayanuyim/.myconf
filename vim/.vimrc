@@ -50,11 +50,13 @@ Plug 'leafgarland/typescript-vim'
 Plug 'pangloss/vim-javascript'
 Plug 'elzr/vim-json'
 Plug 'plasticboy/vim-markdown'
-Plug 'shiracamus/vim-syntax-x86-objdump-d'
 "Plug 'tpope/vim-markdown'
+Plug 'shiracamus/vim-syntax-x86-objdump-d'
 Plug 'vim-scripts/gdl.vim'
 Plug 'vim-scripts/openvpn'
 Plug 'vim-scripts/ssa.vim'
+Plug 'vim-scripts/lrc.vim'
+Plug 'vim-scripts/Nmap-syntax-highlight'
 Plug 'cespare/vim-toml'
 Plug 'stevearc/vim-arduino'
 "Plug 'WolfgangMehner/bash-support'
@@ -410,11 +412,11 @@ augroup filetypedetect
 	au BufNewFile,BufRead *.cue setf cue
 	au BufNewFile,BufRead *.ssa setf ssa
 	au BufNewFile,BufRead *.ass setf ssa
-	au BufNewFile,BufRead *.srt setf srt
 	au BufNewFile,BufRead *.ftlh setf html
 	au BufNewFile,BufRead *.ipynb setf json
     au BufNewFile,BufRead *.{gdl,vcg} setf gdl
     au BufNewFile,BufRead *.ovpn setf openvpn
+    au BufNewFile,BufRead *.nmap setf nmap
 augroup END
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
