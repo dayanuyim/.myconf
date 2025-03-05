@@ -1,2 +1,12 @@
-{"psFormat": "table{{.ID}}\t{{.Image}}\t{{.Command}}\t{{.Status}}\t{{.Ports}}\t{{.Names}}"}
-
+{
+	"auths": {
+		"https://index.docker.io/v1/": {
+			"auth": "bmFtZTpwYXNzd29yZA=="
+		}
+	},
+	"HttpHeaders": {
+		"User-Agent": "Docker-Client/18.06.1-ce (linux)"
+	},
+  "imagesFormat": "table{{.Repository}}\t{{.Tag}}\t{{.ID}}\t{{.CreatedAt}}\t{{.CreatedSince}}\t{{.Size}}",
+  "psFormat": "table{{.ID}}\t{{.Names}}\t{{.Image}}\t{{.Command}}\t{{.Status}}\t{{.Ports}}"
+}
