@@ -43,7 +43,10 @@ function tmux-export {
         return 1
     fi
 
-    tmux setenv "$name" "$value" && export "$name"="$value"
+    export "$name"="$value" && \
+        _add_to_prompt_vars "$name" && \
+        tmux setenv "$name" "$value" && \
+        tmux setenv _PROMPT_VARS_GLOBAL "${_PROMPT_VARS_GLOBAL} ${name}"
     return 0
 }
 
@@ -72,14 +75,39 @@ export _PROMPT_SMILEY=${_PROMPT_SMILEY:-0}
 export _PROMPT_POWERLINE=${_PROMPT_POWERLINE:-1}
 export _PROMPT_DIRSTACK=${_PROMPT_DIRSTACK:-0}
 
-if [ -z "$_PROMPT_VARS" ]; then
-    export _PROMPT_VARS=(ARCH CROSS_COMPILE INSTALL_MOD_PATH IP PORT PORTS HOST KEY ID)
+if [ -z "$_PROMPT_VARS_GLOBAL" ]; then
+    export _PROMPT_VARS_GLOBAL="ARCH CROSS_COMPILE INSTALL_MOD_PATH"
 fi
+read -r -a _PROMPT_VARS <<< "$_PROMPT_VARS_GLOBAL"
+export _PROMPT_VARS
 
 # if within IDE, disable it anyway
 if [[ $LISTEN_FDNAMES == "cloud9.socket" || $TERM_PROGRAM == "vscode" ]]; then
     export _PROMPT_POWERLINE=0
 fi
+
+function _add_to_prompt_vars
+{
+    if [[ ! " ${_PROMPT_VARS[@]} " =~ " $1 " ]]; then
+        _PROMPT_VARS+=("$1")
+    fi
+}
+
+function prompt-export
+{
+    name=${1%%=*}
+    value=${1#*=}
+
+    if [[ -z $name ]]; then
+        >&2 echo "usage ${FUNCNAME[0]} <name>=<value>"
+        return 1
+    fi
+
+    export "$name"="$value" && \
+        _add_to_prompt_vars "$name"
+
+    return 0
+}
 
 ############################################################################
 # Path
@@ -524,6 +552,8 @@ alias lsblk='lsblk -o "LABEL,NAME,MAJ:MIN,RM,SIZE,RO,TYPE,FSTYPE,MOUNTPOINT"'
 alias ipfs-cid-hash='ipfs cid format -b base16 -f "%h %D"'
 alias sslscan='sslscan --show-cipher-ids --iana-names'
 alias exiftool='exiftool -a -u'
+alias xfreerdp3="xfreerdp3 /dynamic-resolution /drive:share,$HOME/share"
+alias xfreerdp="xfreerdp /dynamic-resolution /drive:share,$HOME/share"
 
 # Alias definitions.
 # You may want to put all your additions into a separate file like
