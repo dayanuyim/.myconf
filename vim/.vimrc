@@ -220,6 +220,10 @@ function BashCompOps()
 	nnoremap <F9> `Z
 endfunction
 
+au Filetype yaml call YamlCompOps()
+function YamlCompOps()
+	nnoremap <F5> <ESC>mZ<ESC>:!clear && yamllint '%:p'<CR>
+endfunction
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " fold
