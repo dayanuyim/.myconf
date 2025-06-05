@@ -12,6 +12,38 @@ esac
 # Help Functions
 ############################################################################
 
+function add_uniq_to_array
+{
+    local array_name="$1"
+    local value="$2"
+
+    declare -n arr="$array_name"
+
+    for element in "${arr[@]}"; do
+        if [[ "$element" == "$value" ]]; then
+            return 1  # value has existed
+        fi
+    done
+
+    arr+=("$value")  # append the value
+    return 0
+}
+
+function add_uniq_to_arrayline
+{
+    local array_name="$1"
+    local value="$2"
+
+    declare -n arr="$array_name"
+
+    if [[ " $arr " == *" $name "* ]]; then
+        return 1
+    fi
+
+    arr="${arr} ${name}"
+    return 0
+}
+
 function export-add {
     name=${1%%=*}
     value=${1#*=}
@@ -43,10 +75,14 @@ function tmux-export {
         return 1
     fi
 
-    export "$name"="$value" && \
-        _add_to_prompt_vars "$name" && \
-        tmux setenv "$name" "$value" && \
-        tmux setenv _PROMPT_VARS_GLOBAL "${_PROMPT_VARS_GLOBAL} ${name}"
+    # in the shell
+    export "$name"="$value"
+    add_uniq_to_array "_PROMPT_VARS" "$name"
+
+    # cross shells
+    tmux setenv "$name" "$value"
+    add_uniq_to_arrayline "_PROMPT_VARS_GLOBAL" "$name" &&
+        tmux setenv _PROMPT_VARS_GLOBAL "$_PROMPT_VARS_GLOBAL"
     return 0
 }
 
@@ -86,13 +122,6 @@ if [[ $LISTEN_FDNAMES == "cloud9.socket" || $TERM_PROGRAM == "vscode" ]]; then
     export _PROMPT_POWERLINE=0
 fi
 
-function _add_to_prompt_vars
-{
-    if [[ ! " ${_PROMPT_VARS[@]} " =~ " $1 " ]]; then
-        _PROMPT_VARS+=("$1")
-    fi
-}
-
 function prompt-export
 {
     name=${1%%=*}
@@ -103,8 +132,8 @@ function prompt-export
         return 1
     fi
 
-    export "$name"="$value" && \
-        _add_to_prompt_vars "$name"
+    export "$name"="$value"
+    add_uniq_to_array "_PROMPT_VARS" "$name"
 
     return 0
 }
@@ -168,6 +197,7 @@ if ! shopt -oq posix; then
   fi
 fi
 
+source "$HOME/.bash_completion.d/tmux"
 
 ############################################################################
 # Prompt
@@ -552,8 +582,8 @@ alias lsblk='lsblk -o "LABEL,NAME,MAJ:MIN,RM,SIZE,RO,TYPE,FSTYPE,MOUNTPOINT"'
 alias ipfs-cid-hash='ipfs cid format -b base16 -f "%h %D"'
 alias sslscan='sslscan --show-cipher-ids --iana-names'
 alias exiftool='exiftool -a -u'
-alias xfreerdp3="xfreerdp3 /dynamic-resolution /drive:share,$HOME/share"
-alias xfreerdp="xfreerdp /dynamic-resolution /drive:share,$HOME/share"
+alias xfreerdp3="xfreerdp3 /cert-ignore /dynamic-resolution /drive:share,$HOME/share"
+alias xfreerdp="xfreerdp   /cert-ignore /dynamic-resolution /drive:share,$HOME/share"
 
 # Alias definitions.
 # You may want to put all your additions into a separate file like
