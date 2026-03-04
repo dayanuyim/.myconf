@@ -119,6 +119,14 @@ function tmux-clear {
     clear && tmux clear-history
 }
 
+#---------------------------------------------------------------------------
+# Extra Functions
+#---------------------------------------------------------------------------
+
+if [[ -e "$HOME/.bash_funcs" ]]; then
+    source "$HOME/.bash_funcs"
+fi
+
 ############################################################################
 # Define Variables
 ############################################################################
@@ -581,10 +589,11 @@ alias fgrep='fgrep --color=auto'
 alias egrep='egrep --color=auto'
 alias zgrep='zgrep --color=auto'
 
-alias less='less -P "At line %l (file %f) [%p\% into file]"'
+alias less='less -i -P "At line %l (file %f) [%p\% into file]"'
 
+alias ssh-once='ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no'
 alias screen='screen -U -h 20000'
-alias tmux='tmux -u'
+#alias tmux='tmux -u'
 alias cp='cp -i'
 alias mv='mv -v'
 alias rsync-mv='rsync --remove-source-files -a -vhP'
@@ -608,10 +617,9 @@ alias ddd='ddd -nh'
 alias cgdb='cgdb -nh'
 
 alias curl-json='curl -s -H "Content-Type:application/json" -H "Accept:application/json"'
-alias curl-ijson='curl -s -H "Content-Type:application/json"'
-alias curl-ojson='curl -s -H "Accept:application/json"'
 alias curl-github='curl -s -H "Accept: application/vnd.github.v3+json"'
 alias curl-ufo='curl -s -H "Accept: application/ufo"'
+alias curl-fakesrc='curl -H "X-Originating-IP: 127.0.0.1" -H "X-Forwarded-For: 127.0.0.1" -H "X-Remote-IP: 127.0.0.1" -H "X-Remote-Addr: 127.0.0.1"'
 alias 7z-quick='7z a -t7z -m0=lzma -mx=9 -mfb=64 -md=32m -ms=on'
 alias lsblk='lsblk -o "LABEL,NAME,MAJ:MIN,RM,SIZE,RO,TYPE,FSTYPE,MOUNTPOINT"'
 alias ipfs-cid-hash='ipfs cid format -b base16 -f "%h %D"'
@@ -619,8 +627,8 @@ alias sslscan='sslscan --show-cipher-ids --iana-names'
 alias exiftool='exiftool -a -u'
 #alias xfreerdp3="xfreerdp3 /cert:ignore /dynamic-resolution /drive:share,$HOME/share"
 #alias xfreerdp="xfreerdp   /cert:ignore /dynamic-resolution /drive:share,$HOME/share"
-alias xfreerdp3="xfreerdp3 /cert:ignore /dynamic-resolution"
-alias xfreerdp="xfreerdp   /cert:ignore /dynamic-resolution"
+#alias xfreerdp3="xfreerdp3 /cert:ignore /dynamic-resolution"
+#alias xfreerdp="xfreerdp   /cert:ignore /dynamic-resolution"
 
 # Alias definitions.
 # You may want to put all your additions into a separate file like
