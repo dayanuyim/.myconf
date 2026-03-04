@@ -230,7 +230,7 @@ if ! shopt -oq posix; then
   fi
 fi
 
-source "$HOME/.bash_completion.d/tmux"
+#source "$HOME/.bash_completion.d/tmux"
 
 ############################################################################
 # Prompt
@@ -482,7 +482,7 @@ function _mycd {
     if [ ${#DIRSTACK[@]} -ge 10 ]; then  # limit the size of the stack
         popd -n -0 > /dev/null
     fi
-    _mypushd "$@" &&_ls_color_cols | awk '{if(NR > 5){print "...(more)"; exit} else print $0}'
+    _mypushd "$@" && _ls_color_cols | awk -v LIMIT=6 'NR < LIMIT { print; next } { if (getline) print "...(more)"; else print; exit }'
 }
 
 function _mypushd {
