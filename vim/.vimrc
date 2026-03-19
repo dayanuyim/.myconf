@@ -113,6 +113,7 @@ set showcmd
 " eanble mouse
 set ttymouse=xterm2
 set mouse=a
+set clipboard=
 
 " change leader key
 let mapleader = ','

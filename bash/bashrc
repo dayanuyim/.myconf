@@ -238,7 +238,7 @@ if ! shopt -oq posix; then
   fi
 fi
 
-source "$HOME/.bash_completion.d/tmux"
+# source "$HOME/.bash_completion.d/tmux"
 
 ############################################################################
 # Prompt
