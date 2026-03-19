@@ -490,7 +490,7 @@ function _mycd {
     if [ ${#DIRSTACK[@]} -ge 10 ]; then  # limit the size of the stack
         popd -n -0 > /dev/null
     fi
-    _mypushd "$@" && _ls_color_cols | awk -v LIMIT=6 'NR < LIMIT { print; next } { if (getline) print "...(more)"; else print; exit }'
+    _mypushd "$@" && _ls_color_cols | awk -v LIMIT=6 'NR < LIMIT { print; next } { if (getline) print "...(more)"; else print; exit }' || [[ $? == 141 ]]  # omit awk early exit
 }
 
 function _mypushd {
